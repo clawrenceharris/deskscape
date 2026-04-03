@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  username    String   @unique
+  displayName String?
+  avatarUrl   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  avatarPath  String?
+  createdDesks Desk[]  // desks this profile created
+  memberships  Member[] // desks this profile is a member of
+  items DeskItem[] // items this profile has created
+}
+model Desk {
+  id        String   @id @default(cuid())
+  creatorId String
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  schoolId  String
+  imageUrl  String?
+  imagePath String?
+  isPublic  Boolean  @default(false)
+  school  School   @relation(fields: [schoolId], references: [id])
+  creator Profile  @relation(fields: [creatorId], references: [id])
+  members Member[] // profiles that are members of this desk
+  items DeskItem[] // items in this desk
+  @@index([creatorId])
+  @@index([schoolId])
+}
+model Member {
+  id        String @id @default(cuid())
+  profileId String
+  deskId    String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  desk    Desk    @relation(fields: [deskId], references: [id], onDelete: Cascade)
+  @@unique([profileId, deskId])
+  @@index([profileId])
+  @@index([deskId])
+}
+model School {
+  id    String @id @default(cuid())
+  name  String
+  desks Desk[] // desks in this school
+  @@index([name])
+}
+
+model DeskItem {
+  id String @id @default(cuid())
+  deskId String
+  desk Desk @relation(fields: [deskId], references: [id], onDelete: Cascade)
+  title String
+  materials Material[] // files in this desk item
+  creatorId String
+  creator Profile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  @@index([creatorId])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@index([deskId])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+enum MaterialType {
+  NOTES
+  DISCUSSION
+  WORKSHEET
+  QUIZ
+  STUDY_GUIDE
+  TEST
+  FLASHCARDS
+  LECTURE
+  OTHER
+
+}
+model Material {
+  id String @id @default(cuid())
+  deskItemId String
+  url String
+  type MaterialType
+  deskItem DeskItem @relation(fields: [deskItemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([deskItemId])
+}
