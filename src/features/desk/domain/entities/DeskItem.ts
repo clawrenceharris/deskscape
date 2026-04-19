@@ -1,4 +1,4 @@
-import type { Material } from "@/features/materials/domain/entities";
+import { DeskItemMaterial } from "@/features/deskItem/infrastructure/queries";
 import { UserProfile } from "@/features/profile/domain/entities";
 
 /** Snapshot loaded with the item (e.g. aggregate / query). Empty when not included. */
@@ -9,7 +9,7 @@ export type DeskItemProps = {
   deskId: string;
   createdAt: string;
   updatedAt: string;
-  materials: Material[];
+  materials: DeskItemMaterial[];
   creator: UserProfile;
 };
 

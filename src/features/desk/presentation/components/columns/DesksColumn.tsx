@@ -10,6 +10,7 @@ import { DESK_MODAL_TYPES } from "../modals";
 import { DeskListItem } from "../ui";
 import type { DeskForCard, DeskForDetail } from "@/features/desk/infrastructure/queries";
 import { useUserDesks } from "../../hooks/useUserDesks";
+import { useDesk } from "../../hooks";
 
 interface DesksColumnProps extends ColumnProps {
   onDeskClick: (desk: DeskForCard) => void;
@@ -20,7 +21,8 @@ export function DesksColumn ({
   ...props
 }: DesksColumnProps) {
   const { user, profile } = useUser();
-  const { currentDesk } = useDeskContext();
+  const { currentDeskId } = useDeskContext();
+  const { data: currentDesk } = useDesk(currentDeskId ?? null);
   const {data: desks = [], isLoading, error} = useUserDesks(user.id);
   const [search] = useState("");
   const { results: filteredDesks, isLoading: isFilteredDesksLoading } = useSearch({

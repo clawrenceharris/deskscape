@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactNode, useState, useEffect } from "react";
 import { ErrorDetailModal } from "@/components/modals/ErrorModal";
-import { AppError } from "@/types/errors";
 import { useMutationError } from "@/lib/queries/mutations";
 import { normalizeError } from "@/lib/utils/errors";
 import { showErrorToast } from "@/lib/utils/error-toast";
@@ -88,7 +87,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       (
         window as {
-          __showErrorModal?: (error: AppError, context?: string) => void;
+          __showErrorModal?: (error: ApplicationError, context?: string) => void;
         }
       ).__showErrorModal = showErrorModal;
     }
@@ -97,7 +96,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
       if (typeof window !== "undefined") {
         delete (
           window as {
-            __showErrorModal?: (error: AppError, context?: string) => void;
+            __showErrorModal?: (error: ApplicationError, context?: string) => void;
           }
         ).__showErrorModal;
       }

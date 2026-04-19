@@ -20,7 +20,7 @@ export class CreateDeskItemUseCase {
         }
         // 1. Upload files
         const uploadedMaterials = await Promise.all(
-          input.materials.map(async (m) => {
+          input.data.materials.map(async (m) => {
             const uploaded = await this.storage.uploadFile({
               file: m.file,
               userId: user.id,
@@ -32,7 +32,7 @@ export class CreateDeskItemUseCase {
               url: uploaded.url,
               path: uploaded.path,
               fileName: m.file.name,
-              title: m.title ?? m.file.name,
+              title: m.file.name,
               mimeType: m.file.type,
               authorId: user.id,
             };
@@ -43,9 +43,16 @@ export class CreateDeskItemUseCase {
         const deskItem = await this.repository.create({
           deskId: input.deskId,
           creatorId: user.id,
-          title: input.title,
-          description: input.description ?? null,
-          materials: uploadedMaterials,
+          title: input.data.title,
+          description: input.data.description ?? null,
+          materials: uploadedMaterials.map((u) => ({
+            type: u.type ?? "OTHER",
+            url: u.url,
+            path: u.path,
+            title: u.title,
+            mimeType: u.mimeType,
+            authorId: u.authorId,
+          })),
         });
     
         return {

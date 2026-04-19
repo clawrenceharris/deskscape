@@ -19,6 +19,15 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
   const [success, setSuccess] = useState(false);  
   const router = useRouter();
   const { form, resetPassword } = useResetPasswordForm();
+  const handleResetPassword = async (data: ResetPasswordFormValues) => {
+    try {
+      await resetPassword(data);
+      setSuccess(true);
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -36,8 +45,7 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
             :
             <Form<ResetPasswordFormValues>
             form={form}
-            onSubmit={resetPassword}
-            onSuccess={() => setSuccess(true)}
+            onSubmit={handleResetPassword}
             
           >
               <InputField

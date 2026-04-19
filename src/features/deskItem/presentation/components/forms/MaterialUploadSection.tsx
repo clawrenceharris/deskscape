@@ -1,12 +1,12 @@
 "use client";
 import { FieldGroup, SelectContent, Select, SelectTrigger, SelectValue, SelectItem,  Button,Scroller, Field, FieldError } from "@/components/ui";
-import { FileUpload, FileUploadTrigger, FileUploadDropzone, FileUploadList, FileUploadItem, FileUploadItemPreview, FileUploadItemDelete, FileUploadItemMetadata, FileUploadClear, FileUploadItemProgress } from "@/components/ui/file-upload";
+import { FileUpload, FileUploadTrigger, FileUploadDropzone, FileUploadList, FileUploadItem, FileUploadItemPreview, FileUploadItemDelete, FileUploadItemMetadata } from "@/components/ui/file-upload";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { CreateDeskItemFormValues, UpdateDeskItemFormValues } from "@/types/desk";
-import { MaterialType } from "@/features/materials/domain/value-objects";
-import {  Pencil, RefreshCcw, Trash2, Upload, Undo2 } from "lucide-react";
+import { MaterialType } from "@/features/deskItem/domain/value-objects";
+import {  Pencil, Trash2, Upload, Undo2 } from "lucide-react";
 import { toast } from "sonner";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { DeskItemMaterial } from "@/features/deskItem/infrastructure/queries";
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
@@ -21,7 +21,6 @@ export function MaterialUploadSection({
   onToggleExistingMaterial,
 }: MaterialUploadSectionProps) {
   const {control, formState: {errors}} = useFormContext<CreateDeskItemFormValues | UpdateDeskItemFormValues>();
-  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const {fields, append, replace, remove} = useFieldArray({
       control,

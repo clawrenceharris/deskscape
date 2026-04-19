@@ -1,4 +1,3 @@
-import { MaterialType } from "@/features/materials/domain/value-objects";
 import z from "zod";
 
 export const createDeskSchema = z.object({

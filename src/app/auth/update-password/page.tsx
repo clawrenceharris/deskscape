@@ -1,6 +1,6 @@
 "use client"
 
-import { UpdatePasswordForm } from "@/features/auth/components"
+import { UpdatePasswordForm } from "@/features/auth/presentation/components/forms"
 
 export default function Page() {
   return (

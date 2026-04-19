@@ -3,11 +3,11 @@
 import { useState } from "react";
 import {Button, Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui";
 
-import { AppError } from "@/types/errors";
+import { ApplicationError } from "@/lib/utils/errors";
 import { Copy, Check } from "lucide-react";
 
 interface ErrorDetailModalProps {
-  error: AppError | null;
+  error: ApplicationError | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -23,16 +23,8 @@ export function ErrorDetailModal({
 
   const copyErrorDetails = () => {
     const errorText = `
-Error Code: ${error.code}
-Category: ${error.category}
-Severity: ${error.severity}
-Message: ${error.userMessage}
-${error.stack ? `\nStack:\n${error.stack}` : ""}
-${
-  error.metadata
-    ? `\nMetadata:\n${JSON.stringify(error.metadata, null, 2)}`
-    : ""
-}`.trim();
+Message: ${error.message}
+`.trim();
 
     navigator.clipboard.writeText(errorText).then(() => {
       setCopied(true);
@@ -56,7 +48,7 @@ ${
               <p className="font-medium text-destructive mb-2">
                 What happened?
               </p>
-              <p className="text-sm">{error.userMessage}</p>
+              <p className="text-sm">{error.message}</p>
             </div>
 
             
