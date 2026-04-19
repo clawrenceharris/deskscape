@@ -195,4 +195,4 @@ dist
 
 
 # scripts
-scripts/gen-db-types.cjs
+scripts/
