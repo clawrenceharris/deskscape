@@ -3,13 +3,17 @@
 import { makeLoginUserUseCase } from "@/composition/auth";
 import { loginSchema } from "@/lib/validation";
 
-export async function login(rawInput: unknown) {
+type LoginActionResult = {
+  success: boolean;
+  error: { message: string } | unknown;
+};
+export async function login(rawInput: unknown): Promise<LoginActionResult> {
     const {data, success, error} = loginSchema.safeParse(rawInput);
   
     if (!success) {
       return {
         success: false as const,
-        error: error.message,
+        error: {message: error.issues[0].message},
       };
     }
   

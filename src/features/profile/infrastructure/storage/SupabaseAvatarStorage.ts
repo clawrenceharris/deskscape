@@ -6,7 +6,7 @@ export class SupabaseAvatarStorage implements AvatarStorage {
     async upload(input: { userId: string; file: File }): Promise<{ path: string; url: string | null }> {
         const { userId, file } = input;
         const extension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const path = `${userId}/avatar.${extension}`;
+        const path = `${userId}/avatar-${Date.now()}.${extension}`;
         const { data, error } = await this.supabase.storage.from('avatars').upload(path, file);
         if (error) {
             throw error;

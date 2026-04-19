@@ -16,14 +16,14 @@ interface AuthLayoutProps {
 }
 export function AuthLayout({ children, authType }: AuthLayoutProps) {
   return (
-    <div className="w-full m-auto max-w-3xl overflow-hidden items-center justify-center md:min-w-160 flex-col md:flex-row flex  p-3 h-full  max-h-160">
+    <div className="w-full m-auto max-w-sm overflow-hidden items-center justify-center md:min-w-160 flex-col md:flex-row flex  p-3 h-full  max-h-160">
       <Card className="w-full shadow-md overflow-y-auto h-full rounded-2xl">
-        <CardHeader className="border-b p-6 bg-card">
+        <CardHeader className="border-b bg-card">
           <CardTitle className="text-2xl flex items-center font-semibold">
-            Welcome to E-Desk
+            Welcome to Deskscape!
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex h-full   items-center">
+        <CardContent className="flex h-full items-center">
           {children}
         </CardContent>
         <CardFooter className="text-sm justify-center">

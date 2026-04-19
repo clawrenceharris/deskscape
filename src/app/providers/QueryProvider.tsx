@@ -8,6 +8,7 @@ import { AppError } from "@/types/errors";
 import { useMutationError } from "@/lib/queries/mutations";
 import { normalizeError } from "@/lib/utils/errors";
 import { showErrorToast } from "@/lib/utils/error-toast";
+import { ApplicationError } from "@/lib/utils/errors";
 
 export function QueryProvider({ children }: { children: ReactNode }) {
   const { errorModalProps, showErrorModal, clearError } = useMutationError();
@@ -50,7 +51,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
                   const errorHandler = (
                     window as {
                       __showErrorModal?: (
-                        error: AppError,
+                        error: ApplicationError,
                         context?: string
                       ) => void;
                     }
@@ -105,7 +106,6 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools />
       {children}
       {errorModalProps && (
         <ErrorDetailModal
@@ -116,6 +116,8 @@ export function QueryProvider({ children }: { children: ReactNode }) {
           }}
         />
       )}
+      <ReactQueryDevtools />
+
     </QueryClientProvider>
   );
 }

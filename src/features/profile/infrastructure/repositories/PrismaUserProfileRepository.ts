@@ -1,47 +1,26 @@
-import { PrismaClient } from "../../../../../generated/prisma/client";
-import { UserProfile } from "../../domain/entities";
+import { PrismaClientType } from "@/lib/db/prisma";
 import { UserProfileRepository } from "../../domain/repositories";
+import { CreateOrUpdateProfileData } from "./types";
+import { ProfileForDetail, profileForDetailArgs } from "../queries";
 
 export class PrismaUserProfileRepository implements UserProfileRepository {
-    constructor(private readonly prisma: PrismaClient) {}
+    constructor(private readonly prisma: PrismaClientType) {}
    
-    async createProfile(profile: UserProfile): Promise<UserProfile> {
+    async createProfile(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
         const newProfile = await this.prisma.profile.create({
-            data: {
-                displayName: profile.displayName,
-                username: profile.username,
-                avatarUrl: profile.avatarUrl,
-                avatarPath: profile.avatarPath,
-                userId: profile.userId,
-            },
-            select: {
-                id: true,
-                displayName: true,
-                username: true,
-                avatarUrl: true,
-                avatarPath: true,
-                userId: true,
-            },
+            data,
+            ...profileForDetailArgs,
         });
-        return new UserProfile({
-            displayName: newProfile.displayName,
-            username: newProfile.username,
-            avatarUrl: newProfile.avatarUrl,
-            userId: newProfile.userId,
-            avatarPath: newProfile.avatarPath,
-        });
+        return newProfile;
     }
-    async updateProfile(userId: string, profile: UserProfile): Promise<void> {
-        
-        await this.prisma.profile.update({
-            where: { userId },
-            data: {
-                displayName: profile.displayName,
-                username: profile.username,
-                avatarUrl: profile.avatarUrl,
-                avatarPath: profile.avatarPath,
-            },
+    async updateProfile(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
+       
+        const newProfile =await this.prisma.profile.update({
+            where: { userId: data.userId },
+            data,
+            ...profileForDetailArgs,
         });
+        return newProfile;
     }
     async deleteProfile(userId: string): Promise<void> {
         await this.prisma.profile.delete({
@@ -60,56 +39,29 @@ export class PrismaUserProfileRepository implements UserProfileRepository {
         });
         return profile ? true : false;
     }
-    async getProfileByUsername(username: string): Promise<UserProfile | null> {
+    async getProfileByUsername(username: string): Promise<ProfileForDetail | null> {
        const profile = await this.prisma.profile.findFirst({
         where: { username },
+        ...profileForDetailArgs,
         
        });
-       return profile ? new UserProfile({
-        displayName: profile.displayName,
-        username: profile.username,
-        avatarUrl: profile.avatarUrl,
-        userId: profile.userId,
-        avatarPath: profile.avatarPath,
-       }) : null;
+       return profile ?? null;
     }
 
-    async getProfileByUserId(userId: string): Promise<UserProfile | null> {
+    async getProfileByUserId(userId: string): Promise<ProfileForDetail | null> {
         const profile = await this.prisma.profile.findUnique({
             where: { userId },
-            
+            ...profileForDetailArgs,
         });
-        return profile ? new UserProfile({
-            userId: profile.userId,
-            displayName: profile.displayName,
-            username: profile.username,
-            avatarUrl: profile.avatarUrl,
-            avatarPath: profile.avatarPath,
-        }) : null;
+        return profile;
     }
-    async upsert(profile: UserProfile): Promise<UserProfile> {
+    async upsert(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
         const newProfile = await this.prisma.profile.upsert({
-            where: { userId: profile.userId },
-            update: {
-                displayName: profile.displayName,
-                username: profile.username,
-                avatarUrl: profile.avatarUrl,
-                avatarPath: profile.avatarPath,
-            },
-            create: {
-                userId: profile.userId,
-                displayName: profile.displayName,
-                username: profile.username,
-                avatarUrl: profile.avatarUrl,
-                avatarPath: profile.avatarPath,
-            },
+            where: { userId: data.userId },
+            update: data,
+            create: data,
+            ...profileForDetailArgs,
         });
-        return new UserProfile({
-            userId: newProfile.userId,
-            displayName: newProfile.displayName,
-            username: newProfile.username,
-            avatarUrl: newProfile.avatarUrl,
-            avatarPath: newProfile.avatarPath,
-        });
+        return newProfile;
     }
 }

@@ -23,8 +23,11 @@ export const createProfileSchema = z.object({
       (name) => !name || name.trim().length !== 1,
       "Name must be at least 2 characters"
     ),
+  schoolId: z.string().min(1, "Please select a school"),
   username: usernameSchema,
   avatarFile: z
     .union([avatarFileSchema, z.null()])
     .optional(),
 });
+
+export const updateProfileSchema = createProfileSchema.partial();

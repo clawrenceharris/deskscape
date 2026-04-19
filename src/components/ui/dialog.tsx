@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import { X } from "lucide-react"
 
 function Dialog({
   ...props
@@ -60,7 +61,7 @@ function DialogContent({
   showCloseButton?: boolean;
   showsDescription?: boolean;
   description?: string;
-  title: string;
+  title?: string;
 }) {
   return (
     <DialogPortal>
@@ -73,27 +74,27 @@ function DialogContent({
         )}
         {...props}
       >
-        <DialogHeader className="py-5">
+        <DialogHeader >
         <DialogTitle>{title}</DialogTitle>
           {description && (
             <DialogDescription className={!showsDescription ? "sr-only" : ""}>
               {description}
             </DialogDescription>
           )}
-        </DialogHeader>
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close data-slot="dialog-close" asChild>
+           {showCloseButton && (
+          <DialogPrimitive.Close data-slot="dialog-close" asChild className="absolute top-0 right-0">
             <Button
               variant="ghost"
-              className="absolute top-4 right-4"
-              size="icon-sm"
+              size="icon"
             >
-              <HugeiconsIcon className="size-6" icon={Cancel01Icon} strokeWidth={2} />
+              <X className="size-6" strokeWidth={3} />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>
         )}
+        </DialogHeader>
+        {children}
+       
       </DialogPrimitive.Content>
     </DialogPortal>
   )
@@ -103,7 +104,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("relative flex flex-col gap-2 py-4", className)}
       {...props}
     />
   )

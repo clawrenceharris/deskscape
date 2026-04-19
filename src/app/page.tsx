@@ -1,11 +1,5 @@
 "use client"
-import {
-  Brain,
-  CheckCircle,
-  MessageSquare,
-  Sparkles,
-  Users,
-} from "lucide-react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +9,7 @@ export default function LandingPage() {
   const router = useRouter();
   
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-cyan-300/50 to-purple-400/30">
+    <div className="relative min-h-screen overflow-x-hidden bg-linear-to-br from-cyan-300/50 to-purple-400/30">
       
       <div>
         <div className="sticky top-20 bg-primary z-10 h-screen px-4 py-8 md:px-20 md:py-12">
@@ -43,7 +37,7 @@ export default function LandingPage() {
             <div>
              
               <h1 className="mt-6 text-3xl font-semibold lowercase sm:text-4xl">
-                <strong>Your Virtual Desk </strong> right at your fingertips,
+                <strong>Your own Virtual Desk </strong> right at your fingertips,
                
               </h1>
             </div>

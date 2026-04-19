@@ -1,80 +1,107 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { createContext, useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
-import { CreateProfileModal } from "@/features/profile/presentation/components";
-import { UserProfileDto } from "@/types/profile";
 import { Button } from "@/components/ui/button";
+import { CreateProfileModal } from "@/features/profile/presentation/components/modals";
 import { Dialog } from "@/components/ui";
+import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
+import { useUserProfile } from "@/features/profile/presentation/hooks";
+import { ErrorState } from "@/components/states";
 
-const UserContext = createContext<{user: User, profile: UserProfileDto, setProfile: (profile: UserProfileDto | null) => void } | undefined>(undefined);
+type UserContextType = {
+  user: User;
+  profile: ProfileForDetail;
+};
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 type UserProviderProps = {
   children: React.ReactNode;
-  initialProfile: UserProfileDto | null;
   user: User | null;
-}
+};
 
-export function UserProvider({ children, user, initialProfile }: UserProviderProps) {
-const [profile, setProfile] = useState<UserProfileDto | null>(initialProfile ?? null);
+export function UserProvider({
+  children,
+  user,
+}: UserProviderProps) {
   const pathname = usePathname();
-  console.log("profile", profile);
-const router = useRouter();
-useEffect(() => {
-  if(!user && !pathname.includes("auth")) {
-    router.push("/auth/login");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setProfile(null);
-  }
-}, [user, pathname, router]);
-  useEffect(() => {
-    if(user && pathname.includes("auth")) {
-      router.push("/home"); 
-    }
-  }, [pathname, router, user]);
+  const router = useRouter();
+  const {data: profile, error, isLoading: isLoadingProfile, refetch} = useUserProfile(user?.id ?? null);
   
-
-  if(!user && !pathname.includes("auth")){
+  if (!user && !pathname.includes("auth")) {
     return (
-    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-br to-primary from-accent">
-      <Loader2 className="animate-spin" />
-    </div>)
+      <div className="page-center">
+        <Loader2 strokeWidth={2.5} size={40} className="animate-spin" />
+      </div>
+    );
   }
-  else if(!user && pathname.includes("auth")) {
-    return (<>{children}</>)
-    
+  if (!user && pathname.includes("auth")) {
+    return <>{children}</>;
   }
-  else if(!user){
+  if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-linear-to-br to-primary from-accent">
-
-      <p>You are not logged in. Please login to continue.</p>
-      <Button variant="outline" onClick={() => router.push("/auth/login")}>
-        Login
-      </Button>
-    </div>);
+      <div className="page-center">
+        <p>You are not logged in. Please login to continue.</p>
+        <Button variant="outline" onClick={() => router.push("/auth/login")}>
+          Login
+        </Button>
+      </div>
+    );
   }
-  if(!profile) return (
-    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-br to-primary from-accent">
-      <Dialog defaultOpen  open={!profile}>
 
-     
-      <CreateProfileModal onSuccess={(profile) => setProfile(profile)} user={user} />
-       </Dialog>
-    </div>
-  );
+  if (isLoadingProfile) {
+    return (
+      <div className="page-center">
+        <Loader2 strokeWidth={2.5} size={40} className="animate-spin" />
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="page-center">
+       <ErrorState
+        variant="card"
+        title="Error loading profile"
+        message={error.message}
+        onAction={() => router.refresh()}
+        actionLabel="Refresh"
+        onRetry={refetch}
+       />
+      </div>
+    );
+  }
+  if (profile === null) {
+    return (
+      <div className="page-center">
+        <Dialog defaultOpen open>
+          <CreateProfileModal
+            user={user}
+            onSuccess={() => {
+              router.refresh();
+              refetch();
+            }}
+          />
+        </Dialog>
+      </div>
+    );
+  }
+
+  if (profile === undefined) {
+    return (
+      <div className="page-center">
+        <Loader2 strokeWidth={2.5} size={40} className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <UserContext.Provider
-      value={{ profile, setProfile, user }}
-    >
+    <UserContext.Provider value={{ profile, user }}>
       {children}
     </UserContext.Provider>
   );
 }
-
 
 export function useUser() {
   const context = useContext(UserContext);

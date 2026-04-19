@@ -1,11 +1,7 @@
 export enum MaterialType {
-  NOTES = "notes",
-  DISCUSSION = "discussion",
-  WORKSHEET = "worksheet",
-  QUIZ = "quiz",
-  STUDY_GUIDE = "study_guide",
-  TEST = "test",
-  FLASHCARDS = "flashcards",
-  LECTURE = "lecture",
-  OTHER = "other",
+  NOTES = "Notes",
+  WORKSHEET = "Worksheet",
+  QUIZ = "Quiz",
+  STUDY_GUIDE = "Study Guide",
+  OTHER = "Other",
 }

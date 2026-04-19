@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -11,8 +11,9 @@ import React, {
 import { createPortal } from 'react-dom';
 import { Dialog } from '@/components/ui';
 import { ModalProps, modalRegistry, ModalState, ModalType } from '@/lib/modals';
-import { registerProfileModals } from '@/features/profile/presentation/components';
-
+import { registerProfileModals } from '@/features/profile/presentation/components/modals';
+import { registerDeskModals } from '@/features/desk/presentation/components/modals';
+import { registerDeskItemModals } from '@/features/deskItem/presentation/components/modals';
 
 interface ModalContextType {
   openModal: <T extends ModalProps>(type: ModalType, props: T) => void;
@@ -126,7 +127,8 @@ export function useModal() {
 export function ModalRegistration() {
   useEffect(() => {
     registerProfileModals();
-    
+    registerDeskModals();
+    registerDeskItemModals();
   }, []);
 
   return null;

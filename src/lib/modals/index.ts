@@ -4,4 +4,5 @@ export type {
   ModalProps,
   ModalState,
   CreateProfileModalProps,
+  UpdateProfileModalProps,
 } from './types';

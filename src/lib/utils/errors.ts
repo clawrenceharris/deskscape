@@ -16,24 +16,6 @@ export class ApplicationError extends Error {
     }
 }
 
-export class ConflictError extends ApplicationError {
-    constructor(message: string) {
-        super(message);
-        this.name = "ApplicationError";
-    }
-}
-export class UnauthorizedError extends ApplicationError {
-    constructor(message: string) {
-        super(message);
-        this.name = "ApplicationError";
-    }
-}
-export class NotFoundError extends ApplicationError {
-    constructor(message: string) {
-        super(message);
-        this.name = "ApplicationError";
-    }
-}
 export class DomainError extends Error {
     constructor(message: string) {
         super(message);
@@ -68,7 +50,7 @@ export class DomainError extends Error {
       "Server error. Please try again in a moment.",
      
     // Generic
-    [AppErrorCode.UNKNOWN_ERROR]: "Something went wrong. Please try again.",
+    [AppErrorCode.UNKNOWN_ERROR]: "Something went wrong. Please try again later.",
     [AppErrorCode.PERMISSION_DENIED]:
       "You don't have permission to perform this action.",
     [AppErrorCode.RESOURCE_NOT_FOUND]: "The requested resource was not found.",

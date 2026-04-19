@@ -28,8 +28,8 @@ export class SupabaseAuthProvider implements AuthProvider {
       data: { user },
       error,
     } = await this.client.auth.getUser();
-    if (error) return null;
-    if (!user) return null;
+    if (error) throw error;
+    
     return user;
   }
   async signInWithEmail(email: string, password: string): Promise<void> {
@@ -37,7 +37,7 @@ export class SupabaseAuthProvider implements AuthProvider {
       email,
       password,
     });
-    if (error) throw new Error(error.message);
+    if (error) throw error
   }
 
   async signUp(email: string, password: string): Promise<User> {

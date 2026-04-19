@@ -4,15 +4,11 @@
 import { type ReactNode } from "react";
 import {
   FormProvider,
-  useForm,
-  type UseFormProps,
   type FieldValues,
-  type DefaultValues,
   type UseFormReturn,
 } from "react-hook-form";
-import { Button, DialogFooter, FieldDescription, FieldError } from "@/components/ui";
+import { Button, DialogFooter, Field, FieldDescription, FieldError, FieldGroup } from "@/components/ui";
 import { Loader2 } from "lucide-react";
-import { getUserErrorMessage } from "@/lib/utils/errors";
 import { cn } from "@/lib/utils";
 import { BeforeUnload } from "@/components/form";
 
@@ -48,34 +44,32 @@ type FormFooterProps = {
 function FormFooter({showsCancelButton,submitText, onCancel, cancelText, showsSubmitButton, submitButtonClassName, isLoading, disabled}: FormFooterProps){
 
   return (
-    <div className="justify-end flex gap-3 mt-4">
-              {showsCancelButton && (
-                <Button
-                  size={"lg"}
-                  variant={"outline"}
-                  type="button"
-                  onClick={onCancel}
-                >
-                  {cancelText}
-                </Button>
-              )}
+    <Field orientation="horizontal">
+      {showsCancelButton && (
+        <Button
+          variant="outline"
+          type="button"
+          onClick={onCancel}
+        >
+          {cancelText}
+        </Button>
+      )}
 
-              {showsSubmitButton && (
-                <Button
-                  type="submit"
-                  variant="secondary"
-                  className={cn("flex-1 max-w-md mx-auto", submitButtonClassName)}
-                  size={"lg"}
-                  disabled={disabled}
-                >
-                  {isLoading ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    submitText
-                  )}
-                </Button>
-              )}
-            </div>
+      {showsSubmitButton && (
+        <Button
+          type="submit"
+          variant="tertiary"
+          className={cn("flex-1", submitButtonClassName)}
+          disabled={disabled}
+        >
+          {isLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            submitText
+          )}
+        </Button>
+      )}
+    </Field>
   )
 }
 
@@ -100,37 +94,30 @@ export function Form<T extends FieldValues>({
 }: FormProps<T>) {
  
   const {formState: {disabled, isSubmitting}} = form;
+  
   return (
     <BeforeUnload
       disabled={!form.formState.isDirty || !enableBeforeUnloadProtection}
     >
-      
+      <FormProvider {...form}>
       <form
         id={id}
-        onSubmit={(e) =>{
-          e.preventDefault();
-          form.clearErrors();
-          form.handleSubmit(onSubmit)();
-          
-          
-        }}
+        onSubmit={form.handleSubmit(onSubmit)}
         className={cn("w-full h-full", className)}
         aria-describedby={description}>
-        <div className="relative h-full flex flex-col justify-between">
             
           {description && showsDescription && (
             <FieldDescription className={descriptionClassName}>
               {description}
             </FieldDescription>
           )}
+          <FieldGroup className="h-full justify-evenly">
           {typeof children === "function" ? children(form) : children}
           
           {/* General Error */}
 
           {form.formState.errors.root &&  
-            <div className="py-4 px-6 bg-destructive/9 mt-4 rounded-lg border-2 border-destructive/10">
                 <FieldError className="text-destructive">{form.formState.errors.root.message}</FieldError>
-            </div>
           }
 
           {isDialog ?
@@ -158,8 +145,9 @@ export function Form<T extends FieldValues>({
           disabled={disabled || isLoading || isSubmitting} />
           }
 
-        </div>
+        </FieldGroup>
       </form>
+      </FormProvider>
     </BeforeUnload>
   );
 }

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { ModalProvider, QueryProvider } from "./providers";
+import { ModalProvider, QueryProvider ,ThemeProvider} from "./providers";
 import RootLayoutWrapper from "./_components/RootLayoutWrapper";
+import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/shared";
 
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
@@ -31,16 +33,29 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}
+      suppressHydrationWarning
+      className={`antialiased ${geistSans.variable} ${geistMono.variable} font-sans ${figtree.variable}`}
     >
-      <body className="min-h-full flex flex-col">
+      <body>
         
         <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false}
+          >
+            <ModalProvider>
+              <RootLayoutWrapper>           
+                {children}   
+              </RootLayoutWrapper>
+              
+            </ModalProvider>
+            <Toaster />
 
-           <ModalProvider>
-            <RootLayoutWrapper>{children}</RootLayoutWrapper>
-          </ModalProvider>
+          </ThemeProvider>
         </QueryProvider>
+
       </body>
     </html>
   );

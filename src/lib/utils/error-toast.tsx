@@ -1,7 +1,7 @@
-import { AppError } from "@/types/errors";
 import type { Mutation, MutationState } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { CustomToast } from "@/components/ui";
+import { ApplicationError } from "./errors";
 
 /**
  * Checks if mutation has skipToast flag set in metadata
@@ -25,7 +25,7 @@ export function shouldShowToast(
  * @param options - Optional configuration
  */
 export function showErrorToast(
-  error: AppError,
+  error: ApplicationError,
   options?: {
     onShowDetails?: () => void;
     duration?: number;
@@ -51,7 +51,7 @@ export function showErrorToast(
     ),
     {
       data: {
-        title: error.userMessage,
+        title: error.message,
         delay: duration,
       },
     }
