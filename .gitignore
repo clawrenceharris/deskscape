@@ -193,3 +193,6 @@ dist
 .history
 .ionide
 
+
+# scripts
+scripts/gen-db-types.cjs
