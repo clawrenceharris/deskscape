@@ -1,3 +1,3 @@
-export * from "./signup";
-export * from "./login";
-export * from "./signOut";
+export * from "./signupAction";
+export * from "./loginAction";
+export * from "./signOutAction";

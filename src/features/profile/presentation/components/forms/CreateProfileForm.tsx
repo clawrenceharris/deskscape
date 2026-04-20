@@ -29,7 +29,7 @@ import { useSchools } from "@/features/school/presentation/hooks";
 
 type CreateProfileFormProps = {
   onSuccess?: (profile: ProfileForDetail) => void;
-  user: User;
+  userId: string;
 };
 
 const AVATAR_INPUT_ID = "profileImage-upload";
@@ -128,9 +128,9 @@ function ProfileAvatarField({
 
 export function CreateProfileForm({
   onSuccess,
-  user,
+  userId,
 }: CreateProfileFormProps) {
-  const { form, isLoading, createProfile } = useCreateProfileForm({user, onSuccess });
+  const { form, isLoading, createProfile } = useCreateProfileForm({userId, onSuccess });
   const { control, getValues } = form;
   const { data: schools = [] } = useSchools();
   
@@ -142,7 +142,7 @@ export function CreateProfileForm({
         showsCancelButton={false}
         onCancel={() => createProfile(getValues())}
         onSubmit={createProfile}>
-      <ProfileAvatarField userId={user.id} control={control} />
+      <ProfileAvatarField userId={userId} control={control} />
       <FieldGroup>
         <InputField
           name="schoolId"

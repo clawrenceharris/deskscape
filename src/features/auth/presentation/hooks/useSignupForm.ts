@@ -3,10 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signUpSchema } from "@/lib/validation";
 import { SignUpFormValues } from "@/types";
-import { signup as signupAction } from "@/actions/auth";
+import { signupAction } from "@/actions/auth";
 import { getUserErrorMessage } from "@/lib/utils/errors";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const useSignupForm = () => {
+  const router = useRouter();
     const form = useForm<SignUpFormValues>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -15,11 +18,12 @@ export const useSignupForm = () => {
         },
     });
     const signup = async (data: SignUpFormValues) => {
-      const {success, error} =  await  signupAction(data);
-      if (success) {
-        console.log("Signup successful");
+      const result =  await  signupAction(data);
+      if (result.success) {
+        toast.success("Signup successful. Welcome to DeskShare!");
+        router.push("/home");
       } else {
-        form.setError("root", { message: getUserErrorMessage(error) });
+        form.setError("root", { message: getUserErrorMessage(result.error) });
       }
     }
     return { form, signup };

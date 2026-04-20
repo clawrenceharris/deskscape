@@ -5,7 +5,7 @@ import { CreateProfileForm } from "../forms";
 
 export function CreateProfileModal({
   onSuccess,
-  user,
+  userId,
 }: CreateProfileModalProps) {
     
   return (
@@ -15,7 +15,7 @@ export function CreateProfileModal({
       description="Set up your new profile to personalize your experience and let others find you."
     >
       <CreateProfileForm
-          user={user}
+          userId={userId}
           onSuccess={onSuccess}
         />
     </DialogContent>

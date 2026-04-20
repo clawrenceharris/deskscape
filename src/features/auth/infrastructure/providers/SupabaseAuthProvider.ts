@@ -32,12 +32,13 @@ export class SupabaseAuthProvider implements AuthProvider {
     
     return user;
   }
-  async signInWithEmail(email: string, password: string): Promise<void> {
-    const { error } = await this.client.auth.signInWithPassword({
+  async signInWithEmail(email: string, password: string): Promise<User> {
+    const { error, data } = await this.client.auth.signInWithPassword({
       email,
       password,
     });
     if (error) throw error
+    return data.user;
   }
 
   async signUp(email: string, password: string): Promise<User> {

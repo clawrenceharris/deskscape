@@ -8,7 +8,6 @@ datasource db {
 }
 
 model Profile {
-  id           String     @id @default(cuid())
   userId       String     @unique
   username     String     @unique
   displayName  String?
@@ -21,7 +20,7 @@ model Profile {
   avatarPath   String?
   createdDesks Desk[]     @relation("DeskCreator") // desks this profile created
   memberships  Member[] // desks this profile is a member of
-  items        DeskItem[] // items this profile has created
+  notebooks    Notebook[]
   materials    Material[] // materials this profile has created
   downloads    Download[]
 
@@ -41,8 +40,8 @@ model Desk {
   isPublic    Boolean    @default(false)
   school      School     @relation(fields: [schoolId], references: [id])
   creator     Profile    @relation("DeskCreator", fields: [creatorId], references: [userId])
-  members     Member[] // profiles that are members of this desk
-  items       DeskItem[] // items in this desk
+  members     Member[]    // profiles that are members of this desk
+  notebooks   Notebook[] // notebooks in this desk
 
   @@index([creatorId])
   @@index([schoolId])
@@ -64,12 +63,11 @@ model Member {
 model Download {
   userId     String  @unique
   profile    Profile @relation(fields: [userId], references: [userId], onDelete: NoAction)
-  deskItemId String
-  deskItem   DeskItem @relation(fields: [deskItemId], references: [id], onDelete: Cascade)
+  notebookId String
   createdAt  DateTime @default(now()) @map("created_at")
-  
-  @@id([userId, deskItemId])
-
+  notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+  @@id([userId, notebookId])
+  @@index([notebookId])
   @@index([userId])
 }
 
@@ -82,13 +80,14 @@ model School {
   @@index([name])
 }
 
-model DeskItem {
+
+model Notebook {
   id          String     @id @default(cuid())
   deskId      String
   desk        Desk       @relation(fields: [deskId], references: [id], onDelete: Cascade)
   title       String
   description String?
-  materials   Material[] // files in this desk item
+  materials   Material[] // files in this notebook
   creatorId   String
   creator     Profile    @relation(fields: [creatorId], references: [userId], onDelete: Cascade)
   createdAt   DateTime   @default(now()) @map("created_at")
@@ -104,20 +103,19 @@ model DeskItem {
 
 model Vote {
   userId     String
-  deskItemId String
+  notebookId String
   profile    Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  deskItem   DeskItem @relation(fields: [deskItemId], references: [id], onDelete: Cascade)
   isUpvote   Boolean  @default(true)
+  notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
 
-  @@id([userId, deskItemId])
 
+  @@id([userId, notebookId])
   @@index([userId])
-  @@index([deskItemId])
 }
 
 model Material {
   id         String       @id @default(cuid())
-  deskItemId String
+  notebookId String
   url        String
   path       String
   type       MaterialType
@@ -128,10 +126,9 @@ model Material {
   mimeType   String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  deskItem   DeskItem     @relation(fields: [deskItemId], references: [id], onDelete: Cascade)
-
+  notebook   Notebook     @relation(fields: [notebookId], references: [id], onDelete: Cascade)
   @@index([authorId])
-  @@index([deskItemId])
+  @@index([notebookId])
 }
 
 enum MemberRole {

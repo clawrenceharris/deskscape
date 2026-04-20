@@ -1,41 +1,35 @@
 "use client";
 import { Column, type ColumnProps } from "./Column";
 import { Button } from "@/components/ui";
-import { Eye, Plus, Trash } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { EmptyState, LoadingState } from "@/components/states";
-import { useDeskContext, useModal, useUser } from "@/app/providers";
-import { DESK_ITEM_MODAL_TYPES } from "@/features/deskItem/presentation/components/modals";
-import type { DeskItemForDetail } from "@/features/deskItem/infrastructure/queries";
+import { useUser } from "@/app/providers";
+import { NOTEBOOK_MODAL_TYPES } from "@/features/notebook/presentation/components/modals";
+import type { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { Desk } from "../Desk";
-import { useDesks } from "../../hooks/useDesks";
 import { DeskHeader } from "../ui/DeskHeader";
 import { useDesk } from "../../hooks/useDesk";
+import { DESK_MODAL_TYPES } from "../modals";
+import { DeskForCard } from "@/features/desk/infrastructure/queries";
+import { useModals } from "@/hooks/useModals";
 
 interface DeskColumnProps extends ColumnProps {
   deskId: string | null;
-  onDeskItemSelected: (item: DeskItemForDetail | null) => void;
+  onNotebookClick: (item: NotebookForDetail | null) => void;
+  onDeskClick: (desk: DeskForCard) => void;
 }
 
 export function DeskColumn ({
-  onDeskItemSelected,
+  onNotebookClick,
+  deskId,
+
   ...props
 }: DeskColumnProps) {
-  const {currentDeskId}= useDeskContext();
-  const {data: currentDesk = null, isLoading} = useDesk(currentDeskId ?? null);
+  const {data: currentDesk = null, isLoading} = useDesk(deskId);
   const { user } = useUser();
-  const {openModal, closeModal} = useModal();
-  const handleCreateDeskItem = (deskItem: DeskItemForDetail) => {
-    closeModal();
-    onDeskItemSelected(deskItem);
-  };
-  const handleCreateDeskItemClick = () => {
-    if (!currentDesk) return;
-    openModal(DESK_ITEM_MODAL_TYPES.CREATE, {
-      deskId: currentDesk.id,
-      onSuccess: handleCreateDeskItem,
-      onCancel: closeModal
-    });
-  }
+  const { modals } = useModals();
+ 
+  
   if (isLoading) {
     return (
       <Column {...props}>
@@ -48,7 +42,16 @@ export function DeskColumn ({
     return (
       <Column title={""} {...props}>
         <div className="h-full flex-1 flex-col flex items-center justify-center">  
-          <EmptyState title="" message="Select a Desk on the left to see it's contents" />
+          <EmptyState 
+            title="Nothing to see here..." 
+            variant="card"
+            imageUrl="https://i.ibb.co/H87K7h0/desk.png"
+            message="Select a Desk on the left to see its contents or create a new one" 
+            buttonVariant="tertiary"
+            buttonIcon={<Plus strokeWidth={3}/>}
+            onAction={modals[DESK_MODAL_TYPES.CREATE].open}
+            actionLabel="Create a new desk"
+          />
         </div>
       </Column>
     );
@@ -57,7 +60,7 @@ export function DeskColumn ({
   const headerRight = (
      
       <Button
-        onClick={handleCreateDeskItemClick}
+        onClick={() => modals[NOTEBOOK_MODAL_TYPES.CREATE].open(currentDesk.id)}
         size="icon"
         variant="primary"
       >
@@ -74,12 +77,12 @@ export function DeskColumn ({
       contentContainerClassName="h-full overflow-y-auto"
       {...props}
     >
-        <DeskHeader deskItems={currentDesk.items} />
+        <DeskHeader notebooks={currentDesk.notebooks} />
 
         <Desk
-          onCreateDeskItemClick={handleCreateDeskItemClick}
+          onCreateNotebookClick={() => modals[NOTEBOOK_MODAL_TYPES.CREATE].open(currentDesk.id)}
           onSearchChange={() =>{}}
-          onDeskItemClick={onDeskItemSelected}
+          onNotebookClick={onNotebookClick}
         />
         
         {!currentDesk.isPublic && user.id !== currentDesk.creatorId && (

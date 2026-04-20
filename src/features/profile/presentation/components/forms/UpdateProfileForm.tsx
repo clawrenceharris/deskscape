@@ -24,12 +24,15 @@ import { useEffect, useMemo } from "react";
 import { useUpdateProfileForm } from "../../hooks";
 import { SearchSelect } from "@/components/shared";
 import { useSchools } from "@/features/school/presentation/hooks";
+type ProfileAvatarFieldProps = {
+  profile: ProfileForDetail;
+  control: Control<UpdateProfileFormValues>;
 
+}
 type UpdateProfileFormProps = {
   onSuccess?: (profile: ProfileForDetail) => void;
-  
-  onCancel?: () => void;
   profile: ProfileForDetail;
+  onCancel?: () => void;
 };
 
 const AVATAR_INPUT_ID = "profileImage-upload";
@@ -37,10 +40,8 @@ const AVATAR_INPUT_ID = "profileImage-upload";
 function ProfileAvatarField({
   control,
   profile
-}: {
-  profile: ProfileForDetail;
-  control: Control<UpdateProfileFormValues>;
-}) {
+
+}: ProfileAvatarFieldProps) {
   const file = useWatch({ control, name: "avatarFile" });
   const previewUrl = useMemo(() => {
     if (file instanceof File && file.size > 0) {
@@ -83,7 +84,7 @@ function ProfileAvatarField({
             htmlFor={AVATAR_INPUT_ID}
             className="group relative flex max-w-30 h-30 w-full cursor-pointer justify-center rounded-full transition-all duration-300 hover:shadow-lg shadow-secondary/50"
           >
-            <Avatar className="h-30 w-30 rounded-full border-2 border-muted bg-muted object-cover">
+            <Avatar className="h-30 w-30 rounded-full border-2 border-muted bg-input/20 object-cover">
               <AvatarImage
                 src={previewUrl ?? undefined}
                 alt="Profile preview"
@@ -134,7 +135,7 @@ export function UpdateProfileForm({
 }: UpdateProfileFormProps) {
   const { form, isLoading, updateProfile } = useUpdateProfileForm({profile, onSuccess });
   const { control } = form;
-  const {data: schools = []} = useSchools();  
+  const {data: schools = [], isLoading: isLoadingSchools} = useSchools();  
   return (
     <Form<UpdateProfileFormValues>
         isLoading={isLoading}
@@ -159,6 +160,7 @@ export function UpdateProfileForm({
                 value: school.id,
                 label: school.name,
               }))}
+              disabled={isLoadingSchools}
               value={form.getValues("schoolId")}
               onChange={(value) => form.setValue("schoolId", value)}
               placeholder="Select a school"

@@ -2,8 +2,6 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, InformationCircleIcon, Alert02Icon, MultiplicationSignCircleIcon, Loading03Icon } from "@hugeicons/core-free-icons"
 import { CheckCircle, Info, TriangleAlert, CircleAlert } from "lucide-react"
 import { Loader2 } from "lucide-react"
 const Toaster = ({ ...props }: ToasterProps) => {

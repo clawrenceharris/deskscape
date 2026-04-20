@@ -35,6 +35,7 @@ export function SearchSelect({
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
   newItemLabel = 'New',
+  
   ...props
 
 }: SearchSelectProps) {
@@ -60,7 +61,7 @@ export function SearchSelect({
   const showNewOption = searchTrim.length > 0 && !hasExactMatch
 
   const displayLabel =
-    value != null && value !== ''
+    value != null && value !== '' && !props.disabled
       ? (items.find((item) => item.value === value)?.label ?? value)
       : null
 

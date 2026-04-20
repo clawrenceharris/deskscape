@@ -3,7 +3,7 @@ import { DialogContent } from "@/components/ui/dialog";
 import { CreateDeskForm } from "../forms";
 import { CreateDeskModalProps } from "@/lib/modals/types";
 
-export function CreateDeskModal({userId, currentSchoolId, onSuccess, onCancel}: CreateDeskModalProps) {
+export function CreateDeskModal({userId, onSuccess, onCancel}: CreateDeskModalProps) {
  
   return (
     <DialogContent
@@ -13,7 +13,6 @@ export function CreateDeskModal({userId, currentSchoolId, onSuccess, onCancel}: 
     >
       <CreateDeskForm 
         userId={userId} 
-        currentSchoolId={currentSchoolId} 
         onSuccess={onSuccess}
         onCancel={onCancel}
       />

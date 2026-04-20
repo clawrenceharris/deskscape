@@ -3,9 +3,9 @@ import { createContext, useContext, useState } from "react";
 
 type DeskContextType = {
   setCurrentDeskId: (deskId: string | null) => void;
-  setCurrentDeskItemId: (deskItemId: string | null) => void;
+  setCurrentNotebookId: (notebookId: string | null) => void;
   currentDeskId: string | null;
-  currentDeskItemId: string | null;
+  currentNotebookId: string | null;
 }
 
 type DeskProviderProps = {
@@ -16,11 +16,11 @@ const DeskContext = createContext<DeskContextType | undefined>(undefined);
 
 export function DeskProvider({ children }: DeskProviderProps) {
   const [currentDeskId, setCurrentDeskId] = useState<string | null>(null);
-  const [currentDeskItemId, setCurrentDeskItemId] = useState<string | null>(null);
+  const [currentNotebookId, setCurrentNotebookId] = useState<string | null>(null);
   
   return <DeskContext.Provider value={{ 
-    setCurrentDeskItemId,
-    currentDeskItemId,
+    setCurrentNotebookId,
+    currentNotebookId,
     currentDeskId,
     setCurrentDeskId,
     }}>

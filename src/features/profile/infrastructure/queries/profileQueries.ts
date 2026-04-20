@@ -20,7 +20,7 @@ export const profileForDetailArgs = {
                 },
             },
         },
-        items: {
+        notebooks: {
             select: {
                 id: true,
                 title: true,

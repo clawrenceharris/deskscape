@@ -1,5 +1,5 @@
 import z from "zod";
-import { forgotPasswordSchema, loginSchema, signUpSchema, resetPasswordSchema } from "@/lib/validation/authSchemas";
+import { forgotPasswordSchema, loginSchema, signUpSchema, resetPasswordSchema } from "@/lib/validation/auth";
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;

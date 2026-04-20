@@ -1,4 +1,4 @@
-export * from "./RootHeader";
+export * from "./Header";
 export * from "./SearchSelect";
 export * from "./ThemeButton";
 export * from "./ProfileButton";

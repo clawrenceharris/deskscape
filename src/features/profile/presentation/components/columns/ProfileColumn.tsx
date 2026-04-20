@@ -1,18 +1,19 @@
 "use client";
 import { EmptyState } from "@/components/states";
 import { useUserProfile } from "../../hooks";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
-import { FileText, ChevronUp, Notebook } from "lucide-react";
+import { Button } from "@/components/ui";
+import { ChevronUp, Notebook } from "lucide-react";
 import { FilePreviewer, ProfileButton } from "@/components/shared";
-import { useDeskItemsByUserId } from "@/features/deskItem/presentation/hooks";
+import { useNotebooksByUserId } from "@/features/notebook/presentation/hooks";
 import { useState } from "react";
-import { DeskItemForDetail, DeskItemMaterial } from "@/features/deskItem/infrastructure/queries";
+import { NotebookForDetail, NotebookMaterial } from "@/features/notebook/infrastructure/queries";
 import { useModal } from "@/app/providers";
 import { PROFILE_MODAL_TYPES } from "../modals";
 import { useQueryClient } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/queries";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/presentation/hooks";
+import { Q, RIGHT_MODES } from "@/app/(app)/home/_providers/HomeNavigationProvider";
 
 type ProfileColumnProps = {
   userId: string;
@@ -20,7 +21,7 @@ type ProfileColumnProps = {
 
 export function ProfileColumn({ userId }: ProfileColumnProps) {
   const { data: profile } = useUserProfile(userId);
-  const {data: deskItems = []} = useDeskItemsByUserId(userId);
+  const {data: notebooks = []} = useNotebooksByUserId(userId);
   const [activeTab, setActiveTab] = useState<"mine" | "others">("mine");
   const {openModal, closeModal} = useModal();
   const queryClient = useQueryClient();
@@ -28,7 +29,7 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
   const handleTabClick = (tab: "mine" | "others") => {
     setActiveTab(tab);
   };
-  const {signOut} = useAuth();
+  const { signOut, isLoading: isSigningOut } = useAuth();
 
   const handleEditProfileClick = () => {
     openModal(PROFILE_MODAL_TYPES.UPDATE, {
@@ -42,15 +43,17 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
       },
     });
   };
-  const handleMaterialClick = (material: DeskItemMaterial) => {
-    router.push(`/home?r=item&desk=${material.deskItem.deskId}&item=${material.deskItemId}`);
+  const handleMaterialClick = (material: NotebookMaterial) => {
+    const notebook = notebooks.find(d => d.id === material.notebookId);
+    if(!notebook) return;
+    router.push(`/home?${Q.rightMode}=${RIGHT_MODES.notebook}&${Q.desk}=${notebook.deskId}&${Q.notebook}=${material.notebookId}&${Q.materialIndex}=${notebook.materials.findIndex(m => m.id === material.id)}`);
   };
   if (!profile) {
     return <EmptyState message="This User's profile does not exist." />
   }
   const stats = {
-    notebooks: profile.items?.length || 0,
-    votes: deskItems.reduce(
+    notebooks: profile.notebooks.length || 0,
+    votes: notebooks.reduce(
       (acc, item) =>
         acc +
         item.votes.reduce((voteAcc, v) => voteAcc + (v.isUpvote ? 1 : -1), 0),
@@ -96,8 +99,23 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
         </div>
           
       <div className="flex gap-2">
-        <Button onClick={handleEditProfileClick} className="flex-1 font-semibold" variant="secondary">Edit Profile</Button>
-        <Button  onClick={signOut} className="flex-1 font-semibold" variant="tertiary">Sign Out</Button>
+        <Button 
+          onClick={handleEditProfileClick} 
+          className="flex-1 font-semibold" 
+          variant="secondary"
+          size="sm"
+        >
+          Edit Profile
+        </Button>
+        <Button  
+          onClick={signOut} 
+          className="flex-1 font-semibold" 
+          variant="tertiary"
+          disabled={isSigningOut}
+          size="sm"
+        >
+        Sign Out
+        </Button>
       </div>
     </div>
 
@@ -119,27 +137,27 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
     </div>
 
       {/* Grid Section */}
-      {activeTab === "mine" && <NotebookGrid onMaterialClick={handleMaterialClick} deskItems={deskItems} emptyText="You haven't posted any notebooks yet." /> }
-      {activeTab === "others" && <NotebookGrid onMaterialClick={handleMaterialClick} deskItems={deskItems.filter(d => d.creatorId !== profile.userId)} emptyText="You haven't saved anyone else's notebooks yet." />}
+      {activeTab === "mine" && <NotebookGrid onMaterialClick={handleMaterialClick} notebooks={notebooks} emptyText="You haven't posted any materials yet." /> }
+      {activeTab === "others" && <NotebookGrid onMaterialClick={handleMaterialClick} notebooks={notebooks.filter(d => d.creatorId !== profile.userId)} emptyText="You haven't saved anyone else's notebooks yet." />}
      
     </div>
   );
 }
 type NotebookGridProps = {
-  deskItems: DeskItemForDetail[];
+  notebooks: NotebookForDetail[];
   emptyText: string;
-  onMaterialClick: (material: DeskItemMaterial) => void;
+  onMaterialClick: (material: NotebookMaterial) => void;
 }
-function NotebookGrid({onMaterialClick, deskItems, emptyText}: NotebookGridProps) {
-
-  if (deskItems.length === 0) {
+function NotebookGrid({onMaterialClick, notebooks, emptyText}: NotebookGridProps) {
+  const materials = notebooks.flatMap(d => d.materials).filter(m => m.url);
+  if (materials.length === 0) {
     return <EmptyState variant="item" message={emptyText} />
   }
 
   return (
     <div className="relative flex min-h-0 flex-1 h-full flex-col overflow-y-auto p-3">
       <div className="grid grid-cols-3 gap-1">
-      {deskItems.flatMap(d => d.materials).map((m) => (
+      {materials.map((m) => (
         <button 
           key={m.id} 
           
@@ -150,10 +168,7 @@ function NotebookGrid({onMaterialClick, deskItems, emptyText}: NotebookGridProps
           <FilePreviewer
               enableExpand={false}
               className="size-full flex-1 absolute"
-              url={m.url}
-              filename={m.title ?? ""}
-              visible={true}
-              onDownloadClick={() => {}}
+              materials={[m]}
             />
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-white">
@@ -161,7 +176,7 @@ function NotebookGrid({onMaterialClick, deskItems, emptyText}: NotebookGridProps
               <ChevronUp strokeWidth={3} className="size-4 text-white" />
               <span className="text-xs font-bold">
                 {
-                  deskItems.find(d => d.materials.some(mat => mat.id === m.id))?.votes.filter(v => v.isUpvote).length ?? 0
+                  notebooks.find(d => d.materials.some(mat => mat.id === m.id))?.votes.filter(v => v.isUpvote).length ?? 0
                 }
               </span>
         
@@ -171,7 +186,7 @@ function NotebookGrid({onMaterialClick, deskItems, emptyText}: NotebookGridProps
       ))}
      
     </div>
-    {deskItems.length >= 3 && (
+    {notebooks.length >= 3 && (
           <div className="p-4 flex justify-center pb-8">
             <Button variant="outline" className="w-full max-w-xs rounded-full font-semibold">
               View all items

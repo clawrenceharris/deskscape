@@ -1,24 +1,24 @@
 
-import { DeskItemForDetail } from "@/features/deskItem/infrastructure/queries";
+import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { useMemo } from "react";
 
 interface DeskHeaderProps {
-  deskItems: DeskItemForDetail[];
+  notebooks: NotebookForDetail[];
 }
 
-export function DeskHeader({deskItems}: DeskHeaderProps) {
+export function DeskHeader({notebooks}: DeskHeaderProps) {
   const downloadCount = useMemo(() =>{
-    return deskItems.reduce((acc, item) => item.downloads.length + acc, 0)
-  },[deskItems]);
+    return notebooks.reduce((acc, item) => item.downloads.length + acc, 0)
+  },[notebooks]);
   const voteCount = useMemo(() =>{
-    return deskItems.reduce((acc, item) => {
+    return notebooks.reduce((acc, item) => {
       const upvotes = item.votes.filter(v => v.isUpvote);
       const downvotes = item.votes.filter(v => !v.isUpvote);
       return (upvotes.length - downvotes.length) + acc;
     } ,0)
-  },[deskItems])
+  },[notebooks])
   return (
-    <div role="header" className="column-header justify-between mb-7 -top-30 bg-surface">
+    <div role="header" className="column-header justify-between -top-30 bg-surface">
      
         <div className="flex flex-1 justify-between w-full">
           <div
@@ -31,7 +31,7 @@ export function DeskHeader({deskItems}: DeskHeaderProps) {
               alignItems: "center",
             }}
           >
-            <h3>{deskItems.length || 0}</h3>
+            <h3>{notebooks.length || 0}</h3>
 
             <p className="text-muted-foreground">Uploads</p>
           </div>

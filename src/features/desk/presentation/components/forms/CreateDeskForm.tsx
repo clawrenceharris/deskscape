@@ -5,27 +5,20 @@ import { DeskForDetail } from "../../../infrastructure/queries";
 import { useCreateDeskForm } from "../../hooks";
 import {SearchSelect} from "@/components/shared";
 import { Switch } from "@/components/ui";
-import { useController } from "react-hook-form";
-import { useSchool } from "@/app/providers";
 import { useSchools } from "@/features/school/presentation/hooks";
 
 
 type CreateDeskFormProps = {
   userId: string;
-  currentSchoolId: string;
   onSuccess?: (desk: DeskForDetail) => void;
   onError?: (error: string) => void;
   onCancel?: () => void;
 }
-export function CreateDeskForm({userId, currentSchoolId,onCancel, onSuccess, onError}: CreateDeskFormProps) {
+export function CreateDeskForm({userId,onCancel, onSuccess, onError}: CreateDeskFormProps) {
   const {form, createDesk, isLoading} = useCreateDeskForm({userId, onSuccess, onError});
   const {control, setValue} = form;
-  const {data: schools = []} = useSchools();  
+  const {data: schools = [], isLoading: isLoadingSchools} = useSchools();  
   
-  const {field: schoolIdField} = useController<CreateDeskFormValues, "schoolId">({
-    control,
-    name: "schoolId"
-  });
   const handleSchoolChange = (value: string) => {
     console.log(value);
     if(value.startsWith("__new__:")) {
@@ -51,6 +44,7 @@ export function CreateDeskForm({userId, currentSchoolId,onCancel, onSuccess, onE
           placeholder="Enter the name of the desk"
           required
         />
+        
         <InputField 
         
         name="schoolId"
@@ -65,12 +59,12 @@ export function CreateDeskForm({userId, currentSchoolId,onCancel, onSuccess, onE
                 value: school.id,
                 label: school.name,
               }))}
-              defaultValue={currentSchoolId}
-              value={schoolIdField.value}
+              disabled={isLoadingSchools}
+              value={form.getValues("schoolId")}
               onChange={handleSchoolChange}
               placeholder="Select a school"
               searchPlaceholder="Find a school"
-              newItemLabel="New school"
+              newItemLabel="Add school"
             />
         )}
         

@@ -2,13 +2,14 @@
 import { useMediaQuery } from "@/hooks";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 export type ColumnType = "left" | "center" | "right";
-export type RightPanelMode = "deskItem" | "profile";
+export type RightPanelMode = "notebook" | "profile";
 
 interface LayoutProviderProps {
   children: React.ReactNode;
   initialColumns?: ColumnType[];
 }
 interface LayoutContextType {
+  openRightLayout: () => void;
   isColumnOpen: (columnType: ColumnType) => boolean;
   openColumn: (columnType: ColumnType) => void;
   closeColumn: (columnType: ColumnType) => void;
@@ -16,7 +17,7 @@ interface LayoutContextType {
   rightMode: RightPanelMode;
   setRightMode: (mode: RightPanelMode) => void;
   selectDeskLayout: () => void;
-  selectDeskItemLayout: () => void;
+  selectNotebookLayout: () => void;
   closeRightLayout: () => void;
   openLeftLayout: () => void;
   normalizeLayout: (hasDesk: boolean, hasRightPanel: boolean) => void;
@@ -36,7 +37,7 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
   const [openColumns, setOpenColumns] = useState<ColumnType[]>(
     initialColumns ?? ["left", "center"],
   );
-  const [rightMode, setRightMode] = useState<RightPanelMode>("deskItem");
+  const [rightMode, setRightMode] = useState<RightPanelMode>("notebook");
   const [isExpandedMode, setIsExpandedMode] = useState(false);
   const unique = useCallback((columns: ColumnType[]) => {
     return [...new Set(columns)];
@@ -65,7 +66,6 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
 
   const openLeftLayout = useCallback(() => {
     commitColumns(["left"]);
-    console.log("closing expanded mode");
     setIsExpandedMode(false);
   }, [commitColumns]);
 
@@ -73,8 +73,8 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
     commitColumns(isMobile ? ["center"] : ["left"]);
   }, [commitColumns, isMobile]);
 
-  const selectDeskItemLayout = useCallback(() => {
-    setRightMode("deskItem");
+  const selectNotebookLayout = useCallback(() => {
+    setRightMode("notebook");
     commitColumns(["right"]);
   }, [commitColumns]);
 
@@ -83,14 +83,13 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
   }, [commitColumns]);
 
   const openExpandedLayout = useCallback(() => {
-    console.log("opening expanded layout");
     commitColumns(["center"]);
     setIsExpandedMode(true);
 }, [commitColumns]);
 
 
   const closeRightLayout = useCallback(() => {
-    setRightMode("deskItem");
+    setRightMode("notebook");
     // if not expanded mode and not mobile, open left layout
     if(!isExpandedMode && !isMobile){
       commitColumns(["left"]);
@@ -110,7 +109,7 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
         selectDeskLayout();
         return;
       }
-      setRightMode((mode) => mode ?? "deskItem");
+      setRightMode((mode) => mode ?? "notebook");
       openRightLayout()
     },
     [openLeftLayout, openRightLayout, selectDeskLayout],
@@ -166,7 +165,7 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
   }, [isMobile, normalize]);
 
   const value = useMemo(
-    () => ({
+    (): LayoutContextType => ({
       isColumnOpen,
       openColumn,
       closeColumn,
@@ -174,23 +173,13 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
       rightMode,
       setRightMode,
       selectDeskLayout,
-      selectDeskItemLayout,
+      selectNotebookLayout,
       closeRightLayout,
+      openRightLayout,
       openLeftLayout,
       normalizeLayout,
     }),
-    [
-      closeColumn,
-      closeRightLayout,
-      isColumnOpen,
-      normalizeLayout,
-      openColumn,
-      openColumns,
-      openLeftLayout,
-      rightMode,
-      selectDeskItemLayout,
-      selectDeskLayout,
-    ],
+    [closeColumn, closeRightLayout, isColumnOpen, normalizeLayout, openColumn, openColumns, openLeftLayout, openRightLayout, rightMode, selectNotebookLayout, selectDeskLayout],
   );
 
   return (

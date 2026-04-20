@@ -261,7 +261,7 @@ function SelectItem({
       <SelectPrimitive.Item
         data-slot='select-item'
         className={cn(
-          "focus:bg-muted-background focus:text-foreground not-data-[variant=destructive]:focus:**:text-foreground gap-1.5 rounded-md  py-3  pr-8 pl-3 text-sm [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "focus:bg-muted focus:text-foreground not-data-[variant=destructive]:focus:**:text-foreground gap-1.5 rounded-md  py-3  pr-8 pl-3 text-sm [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
           className,
         )}
         {...props}
@@ -302,7 +302,7 @@ function SelectItem({
               },
             }}
             exit={{ opacity: 0 }}
-            className='absolute inset-0 rounded-md bg-muted-background'
+            className='absolute inset-0 rounded-md bg-muted'
           />
         )}
       </AnimatePresence>

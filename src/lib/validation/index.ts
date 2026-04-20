@@ -1,3 +1,4 @@
-export * from "./authSchemas";
-export * from "./profileSchemas";
-export * from "./deskSchemas";
+export * from "./auth";
+export * from "./profile";
+export * from "./desk";
+export * from "./notebook"

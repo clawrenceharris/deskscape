@@ -1,4 +1,4 @@
-import { deskItemForDetailArgs } from "@/features/deskItem/infrastructure/queries";
+import { notebookForDetailArgs } from "@/features/notebook/infrastructure/queries";
 import { Prisma } from "@/lib/db/prisma";
 
 export const deskForDetailArgs = {
@@ -24,8 +24,8 @@ export const deskForDetailArgs = {
           },
         },
       },
-      items: {
-        ...deskItemForDetailArgs,
+      notebooks: {
+        ...notebookForDetailArgs,
         },
         
         
@@ -35,7 +35,7 @@ export const deskForDetailArgs = {
   
   export const deskForCardArgs = {
     include: {
-      items: {
+      notebooks: {
         take: 99,
         select: {
           id: true,

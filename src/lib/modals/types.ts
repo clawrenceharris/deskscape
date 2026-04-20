@@ -1,7 +1,5 @@
 import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
-import { SchoolDto } from "@/types/school";
-import { User } from "@supabase/supabase-js";
-import { DeskItemForDetail } from "@/features/deskItem/infrastructure/queries";
+import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { DeskForDetail } from "@/features/desk/infrastructure/queries";
 
 /**
@@ -23,11 +21,9 @@ export type ModalType =
   | "desk:create"
   | "desk:update"
   | "desk:delete"
-  | "desk-item:create"
-  | "desk-item:update"
-  | "material:update"
-  | "material:delete"
-  | "material:create";
+  | "notebook:create"
+  | "notebook:update"
+  | "notebook:delete"
 
 /**
  * State interface for ModalProvider
@@ -43,7 +39,7 @@ export interface ModalState {
 
 export interface CreateProfileModalProps extends ModalProps {
   onSuccess?: (profile: ProfileForDetail) => void;
-  user: User;
+  userId: string;
 }
 
 export interface UpdateProfileModalProps extends ModalProps {
@@ -58,19 +54,28 @@ export interface UpdateProfileModalProps extends ModalProps {
 
 export interface CreateDeskModalProps extends ModalProps {
   userId: string;
-  currentSchoolId: string;
   onSuccess?: (desk: DeskForDetail) => void;
   
 }
-
-export interface CreateDeskItemModalProps extends ModalProps {
+export interface UpdateDeskModalProps extends ModalProps {
   deskId: string;
-  onSuccess?: (deskItem: DeskItemForDetail) => void;
+  onSuccess?: (desk: DeskForDetail) => void;
+  onCancel?: () => void;
+}
+
+
+// ============================================================================
+// Notebook Modal Props
+// ============================================================================
+
+export interface CreateNotebookModalProps extends ModalProps {
+  deskId: string;
+  onSuccess?: (notebook: NotebookForDetail) => void;
   
 }
 
-export interface UpdateDeskItemModalProps extends ModalProps {
-  deskItemId: string;
-  onSuccess?: (deskItem: DeskItemForDetail) => void;
+export interface UpdateNotebookModalProps extends ModalProps {
+  notebookId: string;
+  onSuccess?: (notebook: NotebookForDetail) => void;
  
 }

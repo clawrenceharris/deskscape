@@ -7,6 +7,7 @@ import type { CreateDeskFormValues } from "@/types";
 import { useAsyncAction } from "@/hooks";
 import { createDeskAction } from "@/actions/desk";
 import { DeskForDetail } from "../../infrastructure/queries";
+import { useUserProfile } from "@/features/profile/presentation/hooks";
 
 type UseCreateDeskFormProps = {
     userId: string;
@@ -15,11 +16,12 @@ type UseCreateDeskFormProps = {
 }
 export function useCreateDeskForm ({userId, onSuccess, onError}: UseCreateDeskFormProps) {
     const { executeWithData: execute, isLoading} = useAsyncAction<DeskForDetail>();
+    const {data: profile} = useUserProfile(userId);
     const form = useForm<CreateDeskFormValues>({
         resolver: zodResolver(createDeskSchema),
         defaultValues: {
             name: "",
-            schoolId: "",
+            schoolId: profile?.schoolId ?? "",
             imageFile: null,
             isPublic: true,
             description: "",

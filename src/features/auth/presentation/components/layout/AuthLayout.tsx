@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui";
 import Link from "next/link";
-
+import Image from "next/image";
 interface AuthLayoutProps {
   children: React.ReactNode;
   authType: "login" | "sign-up";
@@ -18,9 +18,10 @@ export function AuthLayout({ children, authType }: AuthLayoutProps) {
   return (
     <div className="w-full m-auto max-w-sm overflow-hidden items-center justify-center md:min-w-160 flex-col md:flex-row flex  p-3 h-full  max-h-160">
       <Card className="w-full shadow-md overflow-y-auto h-full rounded-2xl">
-        <CardHeader className="border-b bg-card">
+        <CardHeader className="border-b bg-card flex items-center">
+         <Image src="/images/logo-secondary.png" alt="Desk Share Logo" width={80} height={80}/>
           <CardTitle className="text-2xl flex items-center font-semibold">
-            Welcome to Deskscape!
+            Welcome to DeskShare!
           </CardTitle>
         </CardHeader>
         <CardContent className="flex h-full items-center">

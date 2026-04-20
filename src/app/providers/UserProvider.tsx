@@ -77,7 +77,7 @@ export function UserProvider({
       <div className="page-center">
         <Dialog defaultOpen open>
           <CreateProfileModal
-            user={user}
+            userId={user.id}
             onSuccess={() => {
               router.refresh();
               refetch();

@@ -44,11 +44,12 @@ export interface EmptyStateProps {
   buttonVariant?: "default" | "primary" | "outline" | "secondary" | "ghost" | "destructive" | "link" | "tertiary";
   secondaryButtonVariant?: "default" | "primary" | "outline" | "secondary" | "ghost" | "destructive" | "link";
   itemVariant?: "default" | "outline" | "muted";
+  imageUrl?: string;
 }
 
 export function EmptyState({
   variant = "default",
-  title = "Nothing here yet.",
+  title = "Nothing to see here...",
   message: message = "There are no items to display at the moment.",
   icon,
   itemVariant = "default",
@@ -60,21 +61,22 @@ export function EmptyState({
   buttonVariant = "primary",
   secondaryButtonVariant = "outline",
   buttonIcon,
+  imageUrl,
   }: EmptyStateProps) {
   const renderActions = () => {
     if (!onAction && !onSecondaryAction) return null;
 
     return (
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <>
         {onAction && actionLabel && (
-          <Button variant={buttonVariant} onClick={onAction}>{buttonIcon}{actionLabel}</Button>
+          <Button className="flex-1" variant={buttonVariant} onClick={onAction}>{buttonIcon}{actionLabel}</Button>
         )}
         {onSecondaryAction && secondaryActionLabel && (
-          <Button onClick={onSecondaryAction} variant={secondaryButtonVariant}>
+          <Button className="flex-1" onClick={onSecondaryAction} variant={secondaryButtonVariant}>
             {secondaryActionLabel}
           </Button>
         )}
-      </div>
+      </>
     );
   };
   const renderPage = () => (
@@ -118,15 +120,15 @@ export function EmptyState({
           height={510}
           className="w-full max-w-[200px] mx-auto"
           alt="Sad Notebook"
-          src="/images/error.png"
+          src={imageUrl ? imageUrl : "/images/error.png"}
         />
         <CardTitle className="text-2xl">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {message && <CardDescription>{message}</CardDescription>}
       </CardContent>
-      <CardFooter className="justify-end">
-        <CardAction>{renderActions()}</CardAction>
+      <CardFooter>
+        <CardAction className="flex-1">{renderActions()}</CardAction>
       </CardFooter>
     </Card>
   );

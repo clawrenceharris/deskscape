@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import {  UseFormReturn, useWatch    } from "react-hook-form";
 
 type UseChangeUsernameProps= {
-    userId: string;
+    userId: string | null;
     form: UseFormReturn<any>;
 }
 export const useChangeUsername = ({userId, form}: UseChangeUsernameProps) => {
@@ -18,6 +18,8 @@ export const useChangeUsername = ({userId, form}: UseChangeUsernameProps) => {
         return;
     }
     const checkUsername = async () => {
+        if(!userId) return;
+
         form.clearErrors("username");
         const result = await checkUsernameAvailability(username, userId);
         if(result.success){

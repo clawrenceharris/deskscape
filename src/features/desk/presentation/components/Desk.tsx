@@ -1,27 +1,27 @@
 import { useDeskContext, useUser } from "@/app/providers";
 import { EmptyState, LoadingState } from "@/components/states";
-import { DeskItemForDetail } from "@/features/deskItem/infrastructure/queries";
+import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { Plus } from "lucide-react";
-import {DeskItem, DeskHeader} from "./ui";
+import {NotebookGridItem} from "./ui";
 import { useDesk } from "../hooks/useDesk";
-import { useDeskItemsByDeskId } from "@/features/deskItem/presentation/hooks";
+import { useNotebooksByDeskId } from "@/features/notebook/presentation/hooks";
 
 interface DeskProps {
-  onDeskItemClick: (deskItem: DeskItemForDetail) => void;
+  onNotebookClick: (notebook: NotebookForDetail) => void;
   useCase?: "default" | "user";
-  selectedItemId?: string | null;
+  selectedNotebookId?: string | null;
   onSearchChange: (searchTerm: string) => void;
-  onCreateDeskItemClick: () => void;
+  onCreateNotebookClick: () => void;
 }
 export function Desk({
-  selectedItemId,
-  onDeskItemClick,
+  selectedNotebookId,
+  onNotebookClick,
   useCase = "default",
-  onCreateDeskItemClick,
+  onCreateNotebookClick,
 }: DeskProps){
   const { currentDeskId} = useDeskContext();
   const {data: desk = null, isLoading} = useDesk(currentDeskId ?? null);
-  const {data: deskItems = []} = useDeskItemsByDeskId(currentDeskId ?? null);
+  const {data: notebooks = []} = useNotebooksByDeskId(currentDeskId ?? null);
   const { user } = useUser();
   
   if (isLoading) {
@@ -56,7 +56,7 @@ export function Desk({
       />
     );
   }
-  if (deskItems.length === 0) {
+  if (notebooks.length === 0) {
     return (
       <div className="h-full flex-1 flex-col flex items-center justify-center">  
        
@@ -66,10 +66,12 @@ export function Desk({
               ? "This user's Desk is empty. When they post something it will appear here."
               : "No one has contributed to this Desk yet. Be the first to add something!"
           }
+          variant="card"
+          imageUrl="https://i.ibb.co/H87K7h0/desk.png"
           buttonVariant="tertiary"
           buttonIcon={<Plus strokeWidth={3}/>}
-          onAction={onCreateDeskItemClick}
-          actionLabel="Create something new!"
+          onAction={onCreateNotebookClick}
+          actionLabel="Add a Notebook"
         />
       </div>
     );
@@ -77,17 +79,17 @@ export function Desk({
 
   return (
     <>
-      {deskItems.length ? (
+      {notebooks.length > 0 ? (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] w-full gap-5 pb-20 px-5 max-w-7xl mx-auto">
-          {deskItems.map((item, index) => {
+          {notebooks.map((n, index) => {
             return (
-              <DeskItem
-                selected={item.id === selectedItemId}
+              <NotebookGridItem
+                selected={n.id === selectedNotebookId}
                 onClick={() => {
-                  onDeskItemClick(item);
+                  onNotebookClick(n);
                 }}
                 key={index}
-                deskItem={item}
+                notebook={n}
               />
             );
           })}
@@ -98,7 +100,7 @@ export function Desk({
             message="No items found"
             buttonVariant="primary"
             buttonIcon={<Plus strokeWidth={3}/>}
-            onAction={onCreateDeskItemClick}
+            onAction={onCreateNotebookClick}
             actionLabel="Create something new!"
           />
         </div>

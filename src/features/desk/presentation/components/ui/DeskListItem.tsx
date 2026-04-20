@@ -15,7 +15,7 @@ export function DeskListItem ({
   desk,
   onClick
 }: DeskListItemProps) {
-  const lastItem = desk.items[desk.items.length - 1];
+  const lastItem = desk.notebooks[desk.notebooks.length - 1];
 
   return (
     <Card
@@ -50,7 +50,7 @@ export function DeskListItem ({
 
           
           <p>{desk.name}</p>
-          <p>{desk.items.length} items</p>
+          <p>{desk.notebooks.length} items</p>
         </div>
       </CardHeader>
       <CardFooter className="flex justify-between pb-4 w-full rounded-b-xl bg-primary-foreground">

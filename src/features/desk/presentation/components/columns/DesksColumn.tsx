@@ -1,16 +1,16 @@
 "use client";
 import { Column, type ColumnProps } from "./Column";
-import { useDeskContext, useModal, useUser } from "@/app/providers";
+import { useDeskContext, useUser } from "@/app/providers";
 import { Button } from "@/components/ui";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
 import { useState } from "react";
 import { useSearch } from "@/hooks";
-import { DESK_MODAL_TYPES } from "../modals";
 import { DeskListItem } from "../ui";
-import type { DeskForCard, DeskForDetail } from "@/features/desk/infrastructure/queries";
+import type { DeskForCard } from "@/features/desk/infrastructure/queries";
 import { useUserDesks } from "../../hooks/useUserDesks";
 import { useDesk } from "../../hooks";
+import { useModals } from "@/hooks/useModals";
 
 interface DesksColumnProps extends ColumnProps {
   onDeskClick: (desk: DeskForCard) => void;
@@ -20,7 +20,7 @@ export function DesksColumn ({
   onDeskClick,
   ...props
 }: DesksColumnProps) {
-  const { user, profile } = useUser();
+  const { user } = useUser();
   const { currentDeskId } = useDeskContext();
   const { data: currentDesk } = useDesk(currentDeskId ?? null);
   const {data: desks = [], isLoading, error} = useUserDesks(user.id);
@@ -29,23 +29,11 @@ export function DesksColumn ({
     data: desks,
     filter: (desk) => desk.name.toLowerCase().includes(search.toLowerCase()),
   });
-  const {openModal, closeModal} = useModal();
-  const handleCreateDesk = (desk: DeskForDetail) =>{
-    closeModal();
-    onDeskClick(desk);
-  }
-  const handleCreateDeskClick = () => {
-    openModal(DESK_MODAL_TYPES.CREATE, { 
-      userId: user.id, 
-      currentSchoolId: profile.schoolId,
-      onSuccess: handleCreateDesk,
-      onCancel:closeModal
-      
-    });
-  }
+  const {modals: { "desk:create": createDeskModal }} = useModals();
+
   const headerRight = (
     <Button
-      onClick={handleCreateDeskClick}
+      onClick={createDeskModal.open}
       size="icon"
       variant="primary"
     >
@@ -103,10 +91,17 @@ export function DesksColumn ({
                 />
             ))}
           </div>
-      
-        <Button variant="primary" className="w-full absolute bottom-4 left-1/2 -translate-x-1/2 max-w-[200px]" onClick={() => {}}>
+        <Button
+          variant="outline"
+          className="absolute border-primary hover:border-primary/80 bg-primary/10 hover:bg-primary/20 text-primary bottom-4 flex left-1/2 -translate-x-1/2 w-full max-w-[200px] mx-auto"
+         
+          onClick={() => {}}
+        >
+          <Search strokeWidth={2.5}/>
           Discover Desks
         </Button>
+   
+   
     </Column>
   );
 }

@@ -7,8 +7,8 @@ export class CheckUsernameAvailabilityUseCase {
 
     async execute(username: string, userId: string): Promise<CheckUsernameAvailabilityResult> {
         try{
-        const user = await this.userProfileRepository.getProfileByUsername(username);
-        if(user && user.userId !== userId) {
+        const profile = await this.userProfileRepository.getProfileByUsername(username);
+        if(profile && profile.userId !== userId) {
             return { isAvailable: false, success: true };
         }
        

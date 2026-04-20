@@ -1,9 +1,12 @@
 "use client"
 import { useMediaQuery } from "@/hooks";
+import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-
-export function ThemeButton() {
+type ThemeButtonProps = {
+  className?: string;
+}
+export function ThemeButton({ className }: ThemeButtonProps) {
   const { theme, setTheme } = useTheme();
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const isDark = theme === "dark" || theme === "system" && prefersDark;
@@ -14,11 +17,12 @@ export function ThemeButton() {
       aria-pressed={isDark}
       aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
       tabIndex={0}
-      className={`
-        shadow 
+      className={cn(`
         bg-surface 
         rounded-full 
         px-1 
+        shadow-md shadow-black/20
+        dark:shadow-black
         flex 
         overflow-hidden 
         cursor-pointer 
@@ -29,7 +33,7 @@ export function ThemeButton() {
         focus:outline-none
         focus-visible:ring-2
         focus-visible:ring-primary
-      `}
+      `, className)}
     >
       {/* Dark Theme Icon */}
       <span
