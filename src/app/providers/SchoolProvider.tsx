@@ -18,9 +18,8 @@ export function SchoolProvider({ children }: SchoolProviderProps) {
     if(!profile){
       return;
     }
-    const schoolId = profile.school?.id;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentSchoolId(schoolId ?? null);
+    setCurrentSchoolId(profile.schoolId);
   }, [profile]);
   return <SchoolContext.Provider value={{ 
     currentSchoolId,

@@ -24,13 +24,25 @@ export function ProfileButton({
         {...props}
         variant="default"
         size="icon-lg"
-        className={cn("flex p-1 bg-primary-foreground rounded-full justify-center items-center gap-2", `shadow-md shadow-black/20 dark:shadow-black ${props.size === "icon-xs" ? "size-[25px]" : props.size === "icon-sm" ? "size-[35px]" : "size-[50px]"}`, disabled ? "pointer-events-none": "", className)} 
+        className={cn("flex bg-primary-foreground rounded-full justify-center items-center gap-2", `shadow-md shadow-black/20 dark:shadow-black ${props.size === "icon-xs" ? "size-[25px]" : props.size === "icon-sm" ? "size-[35px]" : "size-[50px]"}`, disabled ? "pointer-events-none": "", className)} 
       >
 
      <Avatar className="w-full h-full">
       <AvatarImage src={profile?.avatarUrl ?? undefined} />
       <AvatarFallback className={`${props.size === "icon-xs" ? "text-xs" : props.size === "icon-sm" ? "text-sm" : "text-lg"}  border`}>
-        {profile.displayName ? profile.displayName.charAt(0) : profile.username?.charAt(0) ?? ""}
+        {profile.displayName
+          ? (() => {
+              const names = profile.displayName.trim().split(/\s+/);
+              if (names.length === 1) {
+                return names[0][0]?.toUpperCase() ?? "";
+              } else {
+                const first = names[0][0]?.toUpperCase() ?? "";
+                const last = names[names.length - 1][0]?.toUpperCase() ?? "";
+                return first + last;
+              }
+            })()
+          : profile.username?.charAt(0).toUpperCase() ?? ""}
+   
       </AvatarFallback>
      </Avatar>
 

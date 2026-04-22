@@ -2,11 +2,7 @@ import { deskForDetailArgs } from "@/features/desk/infrastructure/queries";
 import { Prisma } from "@/lib/db/prisma";
 
 export const profileForDetailArgs = {
-    select: {
-        userId: true,
-        username: true,
-        displayName: true,
-        avatarUrl: true,
+    include: {
         school: {
             select: {
                 id: true,

@@ -3,7 +3,7 @@ import { Column, type ColumnProps } from "./Column";
 import { Button } from "@/components/ui";
 import { Plus, Trash } from "lucide-react";
 import { EmptyState, LoadingState } from "@/components/states";
-import { useUser } from "@/app/providers";
+import { useSchoolContext, useUser } from "@/app/providers";
 import { NOTEBOOK_MODAL_TYPES } from "@/features/notebook/presentation/components/modals";
 import type { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { Desk } from "../Desk";
@@ -16,7 +16,7 @@ import { SearchBar } from "@/components/shared";
 import { useSearch } from "@/hooks";
 import { useCallback, useState } from "react";
 import { useNotebooksByDeskId } from "@/features/notebook/presentation/hooks/useNotebooks";
-import { useJoinOrLeaveDesk } from "../../hooks/useDeskMembership";
+import { useJoinOrLeaveDesk } from "../../hooks/useJoinOrLeaveDesk";
 
 interface DeskColumnProps extends ColumnProps {
   deskId: string | null;
@@ -35,7 +35,6 @@ export function DeskColumn ({
   const { modals: { "desk:create": createDeskModal }} = useModals();
   const { modals: { "notebook:create": createNotebookModal }} = useModals();
 
-
   function filterNotebooks(
     notebook: NotebookForDetail,
     search: string
@@ -43,7 +42,7 @@ export function DeskColumn ({
     return notebook.title.toLowerCase().includes(search.toLowerCase());
   } 
   const { data: notebooks = [] } = useNotebooksByDeskId(deskId);
-  const { joinDesk, leaveDesk } = useJoinOrLeaveDesk();
+  const { joinDesk, leaveDesk, isJoining, isLeaving } = useJoinOrLeaveDesk();
   const {
     query,
     clearResults,
@@ -54,9 +53,15 @@ export function DeskColumn ({
     data: notebooks,
   });
   const isMyDesk = desk && desk.id === profile.myDesk?.desk.id;
-  const handleJoinDesk = () => {
-    if(!desk) return;
-    joinDesk({deskId: desk.id, userId: user.id}, "CONTRIBUTOR");
+  
+  function handleJoinSchoolDesk() {
+    if(!deskId) return;
+    joinDesk({deskId, userId: user.id, role: "CONTRIBUTOR"});
+  }
+  
+  function handleLeaveSchoolDesk() {
+    if(!deskId) return;
+    leaveDesk({deskId, userId: user.id});
   }
     
   
@@ -120,12 +125,12 @@ export function DeskColumn ({
             variant="card" imageUrl="https://i.ibb.co/H87K7h0/desk.png" 
             message="You are not a member of this desk yet. Join to view its contents." 
             buttonVariant="tertiary" 
-            onAction={handleJoinDesk} 
+            onAction={handleJoinSchoolDesk} 
             actionLabel="Join desk" 
+            isLoadingAction={isJoining}
+            isLoadingSecondaryAction={isLeaving}
             secondaryActionLabel="Remove desk"
-            onSecondaryAction={() => {
-              leaveDesk({deskId: desk.id, userId: user.id});
-            }}
+            onSecondaryAction={handleLeaveSchoolDesk}
           />
         </div>
       </Column>

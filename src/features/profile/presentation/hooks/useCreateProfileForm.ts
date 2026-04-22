@@ -56,12 +56,13 @@ export function useCreateProfileForm({userId, onSuccess, onError}: UseCreateProf
             onError?.(getUserErrorMessage(error));
         },
     })
-    useChangeUsername({userId: user?.id ?? null, form});
+    const { checkUsername } = useChangeUsername({userId: user?.id ?? null, form});
     const createProfile = useCallback(async(data: CreateProfileFormValues) => {
-        if(!form.formState.isValid) return;
+        const isUsernameAvailable = await checkUsername();
+        if(!isUsernameAvailable) return;
         createProfileMutation.mutate(data);
         
 
-    }, [createProfileMutation, form]);
+    }, [checkUsername, createProfileMutation]);
     return {form, isLoading: createProfileMutation.isPending, error: createProfileMutation.error, createProfile};
 }

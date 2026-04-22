@@ -17,6 +17,7 @@ import {
   ItemTitle,
 } from "@/components/ui";
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
 
 /**
  * Available variants for empty state display
@@ -45,6 +46,8 @@ export interface EmptyStateProps {
   secondaryButtonVariant?: "default" | "primary" | "outline" | "secondary" | "ghost" | "destructive" | "link";
   itemVariant?: "default" | "outline" | "muted";
   imageUrl?: string;
+  isLoadingAction?: boolean;
+  isLoadingSecondaryAction?: boolean;
 }
 
 export function EmptyState({
@@ -62,19 +65,30 @@ export function EmptyState({
   secondaryButtonVariant = "outline",
   buttonIcon,
   imageUrl,
+  isLoadingAction,
+  isLoadingSecondaryAction,
   }: EmptyStateProps) {
   const renderActions = () => {
     if (!onAction && !onSecondaryAction) return null;
 
     return (
       <>
-        {onAction && actionLabel && (
-          <Button  className="flex-1" variant={buttonVariant} onClick={onAction}>{buttonIcon}{actionLabel}</Button>
-        )}
+       
         {onSecondaryAction && secondaryActionLabel && (
-          <Button className="flex-1" onClick={onSecondaryAction} variant={secondaryButtonVariant}>
-            {secondaryActionLabel}
+          <Button 
+            className="flex-1" 
+            onClick={onSecondaryAction} 
+            variant={secondaryButtonVariant} 
+            disabled={isLoadingSecondaryAction}
+          >
+            {isLoadingSecondaryAction ? <Loader2 className="w-4 h-4 animate-spin" /> : secondaryActionLabel}
           </Button>
+        )}
+         {onAction && actionLabel && (
+            <Button  className="flex-1" variant={buttonVariant} onClick={onAction} disabled={isLoadingAction}>
+              { isLoadingAction ? (<Loader2 className="w-4 h-4 animate-spin" />)
+              : (<>{buttonIcon}{actionLabel}</>)}
+            </Button>
         )}
       </>
     );
@@ -121,7 +135,7 @@ export function EmptyState({
       <CardContent>
         {message && <CardDescription>{message}</CardDescription>}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-center gap-4">
         {renderActions()}
       </CardFooter>
     </Card>

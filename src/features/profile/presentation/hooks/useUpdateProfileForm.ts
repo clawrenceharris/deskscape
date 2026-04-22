@@ -21,7 +21,7 @@ export const useUpdateProfileForm = ({onSuccess, onError, profile}: UseUpdatePro
             displayName: profile.displayName ?? "",
             username: profile.username,
             avatarFile: null,
-            schoolId: profile.school?.id ?? "",
+            schoolId: profile.schoolId ?? "",
         },
     });
     useChangeUsername({userId: profile.userId, form});

@@ -20,6 +20,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           {profile && (
             <ProfileButton 
+            className="p-1"
             onClick={handleProfileClick}
             profile={profile} 
             showsName={false} 

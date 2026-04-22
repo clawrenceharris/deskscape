@@ -33,7 +33,7 @@ export function DesksColumn ({
   const { data: profile } = useUserProfile(user.id);
   const { modals: { "desk:create": createDeskModal }} = useModals();
   const { currentSchoolId } = useSchoolContext();
-  const { data: school } = useSchool(currentSchoolId);
+  const { data: school, isLoading: isSchoolLoading } = useSchool(currentSchoolId);
   const headerRight = (
     <div className="flex items-center gap-2">
       <SearchBar
@@ -52,7 +52,7 @@ export function DesksColumn ({
     </div>
   );
   
-  if(isFilteredDesksLoading) {
+  if(query && isFilteredDesksLoading) {
     return (
       <Column {...props}>
         <div className="h-full flex-1 flex items-center justify-center">
@@ -63,7 +63,7 @@ export function DesksColumn ({
   }
  
  
-  if (isLoading) {
+  if (isLoading || isSchoolLoading) {
     return (
       <Column {...props}>
         <div className="h-full flex-1 flex items-center justify-center">
