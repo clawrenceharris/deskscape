@@ -2,8 +2,8 @@
 import { ProfileButton,ThemeButton } from ".";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useAuth } from "@/features/auth/presentation/hooks";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
+import { useAuth } from "@/app/providers";
 
 export function Header() {
   const { user } = useAuth();

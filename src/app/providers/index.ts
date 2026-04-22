@@ -6,3 +6,4 @@ export * from "./LayoutProvider";
 export * from "./ThemeProvider";
 export * from "./SchoolProvider";
 export * from "./HomeNavigationProvider";
+export * from "./AuthProvider";

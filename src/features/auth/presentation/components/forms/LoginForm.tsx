@@ -1,17 +1,29 @@
+"use client"
 import { FieldGroup } from "@/components/ui";
 import { Form, InputField } from "@/components/form";
 import Link from "next/link";
 import { LoginFormValues } from "@/types";
-import { useLoginForm } from "../../hooks";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/lib/validation";
+import { useAuth } from "@/app/providers";
 
 export function LoginForm() {
-  const { form, login } = useLoginForm();
+  const { login } = useAuth();
+
+  const form = useForm<LoginFormValues>({
+      resolver: zodResolver(loginSchema),
+      defaultValues: {
+          email: "",
+          password: "",
+      },
+  });
   return (
     <Form<LoginFormValues>
       form={form}
       showsCancelButton={false}
       showsDescription={true}
-      description="Enter your email below to login to your account"
+      description="Login to your account to start sharing your study materials"
       submitText="Log In"
       onSubmit={login}
     >
@@ -22,11 +34,19 @@ export function LoginForm() {
           control={form.control}
           placeholder="Email"
           label="Email"
+          required
         />
 
         {/* Password */}
         <div className="space-y-2">
-          <InputField placeholder="Your password" control={form.control} type="password" label="Password" name="password" />
+          <InputField 
+            placeholder="Your password" 
+            control={form.control} 
+            type="password" 
+            label="Password" 
+            name="password" 
+            required
+          />
           <div className="flex justify-end">
             <Link
               href="/auth/forgot-password"

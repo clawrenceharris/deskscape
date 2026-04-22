@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Header } from "@/components/shared";
-import { ModalProvider, QueryProvider, ThemeProvider, UserProvider } from "./providers";
+import { AuthProvider, ModalProvider, QueryProvider, ThemeProvider, UserProvider } from "./providers";
 
 export const metadata: Metadata = {
   title: "DeskShare",
@@ -43,6 +43,7 @@ export default async function RootLayout({
             disableTransitionOnChange={false}
           >
             <ModalProvider>
+              <AuthProvider>
               <UserProvider>              
                 <div className="page">
                   <Header/>
@@ -51,7 +52,7 @@ export default async function RootLayout({
                   </main> 
                 </div>
               </UserProvider>
-              
+              </AuthProvider>
             </ModalProvider>
             <Toaster />
 

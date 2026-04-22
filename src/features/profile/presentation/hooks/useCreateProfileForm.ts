@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { useCallback } from "react";
 import { ProfileForDetail } from "../../infrastructure/queries";
 import { useChangeUsername } from "./";
-import { useAuth } from "@/features/auth/presentation/hooks";
 import { createProfileAction } from "@/actions/profile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
 import { deskKeys, profileKeys } from "@/lib/queries";
+import { useAuth } from "@/app/providers";
 
 type UseCreateProfileFormProps = {
     onSuccess?: (profile: ProfileForDetail) => void;

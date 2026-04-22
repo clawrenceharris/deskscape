@@ -119,8 +119,8 @@ export function DesksColumn ({
           ))}
         </div>
       )}
-
-      <Button
+      {/* TODO: Add discover desks feature */}
+      {/* <Button
         variant="outline"
         className="absolute border-primary hover:border-primary/80 bg-primary/10 hover:bg-primary/20 text-primary bottom-4 flex left-1/2 -translate-x-1/2 w-full max-w-[200px] mx-auto"
         onClick={() => {
@@ -129,7 +129,7 @@ export function DesksColumn ({
       >
         <Search strokeWidth={2.5}/>
         Discover Desks
-      </Button>
+      </Button> */}
     </Column>
   );
 }

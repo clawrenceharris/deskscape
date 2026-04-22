@@ -10,7 +10,7 @@ import { Dialog } from "@/components/ui";
 import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
 import { ErrorState } from "@/components/states";
-import { useAuth } from "@/features/auth/presentation/hooks";
+import { useAuth } from "./";
 
 type UserContextType = {
   user: User;

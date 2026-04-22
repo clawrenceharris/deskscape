@@ -1,14 +1,13 @@
 "use client"
+import { useAuth } from "@/app/providers";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
+import { Loader2, LogOut } from "lucide-react";
 
 export function SignOutButton() {
-    const { signOut } = useAuth();
+    const { signOut, isLoading } = useAuth();
     return (
-        <Button variant="outline" onClick={signOut}>
-            <LogOut />
-            Sign Out
+        <Button variant="outline" onClick={signOut} disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : <LogOut /> } Sign Out
         </Button>
     );
 }

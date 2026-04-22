@@ -7,12 +7,11 @@ import { FilePreviewer, ProfileButton } from "@/components/shared";
 import { useNotebooksByUserId } from "@/features/notebook/presentation/hooks";
 import { useState } from "react";
 import { NotebookForDetail, NotebookMaterial } from "@/features/notebook/infrastructure/queries";
-import { useModal } from "@/app/providers";
+import { useAuth, useModal } from "@/app/providers";
 import { PROFILE_MODAL_TYPES } from "../modals";
 import { useQueryClient } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/queries";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/features/auth/presentation/hooks";
 import { Q, RIGHT_MODES } from "@/app/providers";
 
 type ProfileColumnProps = {

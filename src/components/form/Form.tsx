@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
-import { type ReactNode } from "react";
+import { useCallback, type ReactNode } from "react";
 import {
   FormProvider,
   type FieldValues,
@@ -11,6 +11,7 @@ import { Button, DialogFooter, Field, FieldDescription, FieldError, FieldGroup }
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BeforeUnload } from "@/components/form";
+import { getUserErrorMessage } from "@/lib/utils/errors";
 
 export interface FormProps<T extends FieldValues>{
   children?: ((methods: UseFormReturn<T>) => ReactNode) | ReactNode;
@@ -94,7 +95,14 @@ export function Form<T extends FieldValues>({
 }: FormProps<T>) {
  
   const {formState: {disabled, isSubmitting}} = form;
-  
+  const handleSubmit = async (data: T) => {
+    try{
+      return await onSubmit(data);
+    }
+    catch(error){
+      form.setError("root", { message: getUserErrorMessage(error) });
+    }
+  };
   return (
     <BeforeUnload
       disabled={!form.formState.isDirty || !enableBeforeUnloadProtection}
@@ -102,7 +110,7 @@ export function Form<T extends FieldValues>({
       <FormProvider {...form}>
       <form
         id={id}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className={cn("w-full h-full", className)}
         aria-describedby={description}>
             
