@@ -13,8 +13,8 @@ export class CreateMyDeskUseCase {
             if(!profile){
                 return { success: false as const, error: new ApplicationError("Profile not found") };
             }
-            const desk = await this.deskRepository.createMyDesk(profile);
-            return { success: true as const, data: desk };
+            const myDesk = await this.deskRepository.createMyDesk(profile);
+            return { success: true as const, data: myDesk.desk };
         } catch (error) {
             return { success: false as const, error: new ApplicationError(getUserErrorMessage(error)) };
         }

@@ -40,7 +40,7 @@ export function DeskListItem ({
       <CardHeader
         style={{
           backgroundSize: "cover",
-          backgroundImage: desk.imageUrl ? `url(${desk.imageUrl})` : "url(https://i.ibb.co/JcYbrj5/school-background2.png)",
+          backgroundImage: "url(https://i.ibb.co/JcYbrj5/school-background2.png)",
         }}
         className="flex h-30 relative"
       >

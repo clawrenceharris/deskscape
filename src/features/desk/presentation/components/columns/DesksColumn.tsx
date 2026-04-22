@@ -6,14 +6,14 @@ import { Loader2, Plus, Search } from "lucide-react";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
 import { useSearch } from "@/hooks";
 import { DeskListItem } from "../ui";
-import type { DeskForCard, DeskForDetail, SchoolDeskForDetail, MyDeskForDetail } from "@/features/desk/infrastructure/queries";
+import type { DeskForCard, SchoolDeskForDetail, MyDeskForDetail } from "@/features/desk/infrastructure/queries";
 import { useUserDesks } from "../../hooks/useUserDesks";
 import { useCreateMyDesk, useCreateSchoolDesk, useDesk } from "../../hooks";
 import { useModals } from "@/hooks/useModals";
 import { SearchBar } from "@/components/shared";
 import { useSchool } from "@/features/school/presentation/hooks";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
-import { useMemo } from "react";
+import { toast } from "sonner";
 
 interface DesksColumnProps extends ColumnProps {
   onDeskClick: (desk: DeskForCard) => void;
@@ -84,7 +84,7 @@ export function DesksColumn ({
   }
   
   return (
-    <Column  headerRight={headerRight} title={"Desks"} {...props}>
+    <Column headerRight={headerRight} title={"Desks"} {...props}>
        
        
       {query && filteredDesks.length === 0 ? ( 
@@ -112,7 +112,7 @@ export function DesksColumn ({
 
               <DeskListItem
                 onClick={onDeskClick}
-                selected={desk.id === currentDesk?.id}
+                selected={desk.id === currentDeskId}
                 key={desk.id}
                 desk={desk}
               />
@@ -124,8 +124,9 @@ export function DesksColumn ({
       <Button
         variant="outline"
         className="absolute border-primary hover:border-primary/80 bg-primary/10 hover:bg-primary/20 text-primary bottom-4 flex left-1/2 -translate-x-1/2 w-full max-w-[200px] mx-auto"
-        
-        onClick={() => {}}
+        onClick={() => {
+          toast.info("Coming soon!");
+        }}
       >
         <Search strokeWidth={2.5}/>
         Discover Desks
@@ -146,13 +147,23 @@ type SystemDeskListProps = {
   onDeskClick: (desk: DeskForCard) => void;
 }
 function SystemDesks({myDesk, schoolDesk, onDeskClick}: SystemDeskListProps){
+  const { currentDeskId } = useDeskContext();
   return (
     <>
       {myDesk && (
-        <DeskListItem desk={myDesk.desk} onClick={onDeskClick} />
+        <DeskListItem 
+          desk={myDesk.desk} 
+          onClick={onDeskClick} 
+          selected={myDesk.desk.id === currentDeskId}
+        />
       )}
       {schoolDesk && (
-        <DeskListItem desk={schoolDesk.desk} onClick={onDeskClick} />
+        <DeskListItem 
+          desk={schoolDesk.desk} 
+          onClick={onDeskClick} 
+          selected={schoolDesk.desk.id === currentDeskId}
+
+        />
       )}
     </>
   )

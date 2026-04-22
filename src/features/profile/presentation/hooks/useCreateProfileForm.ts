@@ -4,7 +4,6 @@ import { CreateProfileFormValues } from "@/types/profile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
-import { useAsyncAction } from "@/hooks";
 import { ProfileForDetail } from "../../infrastructure/queries";
 import { useChangeUsername } from "./";
 import { useAuth } from "@/features/auth/presentation/hooks";

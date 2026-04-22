@@ -34,8 +34,7 @@ export const deskForDetailArgs = {
   } satisfies Prisma.DeskDefaultArgs;
   
   export const deskForCardArgs = {
-    select: {
-      id: true,
+    include: {
       notebooks: {
         take: 99,
         select: {
