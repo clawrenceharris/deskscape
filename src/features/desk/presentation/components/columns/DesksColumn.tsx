@@ -25,7 +25,6 @@ export function DesksColumn ({
 }: DesksColumnProps) {
   const { user } = useUser();
   const { currentDeskId } = useDeskContext();
-  const { data: currentDesk } = useDesk(currentDeskId ?? null);
   const { data: desks = [], isLoading, error } = useUserDesks(user.id);
   const { query, search: searchDesks, clearResults, results: filteredDesks, isLoading: isFilteredDesksLoading } = useSearch({
     data: desks,
