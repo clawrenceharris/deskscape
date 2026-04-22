@@ -5,6 +5,7 @@ export const deskKeys = {
     listBySchoolId: (schoolId: string) => [...deskKeys.lists(), "school", schoolId] as const,
     details: () => [...deskKeys.all, "detail"] as const,
     detail: (deskId: string) => [...deskKeys.details(), deskId] as const,
+    members: (deskId: string) => [...deskKeys.all, "members", deskId] as const,
 }
 
 export const notebookKeys = {

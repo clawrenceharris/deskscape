@@ -3,4 +3,4 @@ export * from "./CreateDeskData";
 export * from "./GetDesksInput";
 export * from "./GetDesksResult";
 export * from "./JoinDeskInput";
-export * from "./LeaveDeskInput";
+export * from "./JoinOrLeaveDeskInput";

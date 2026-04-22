@@ -1,7 +1,7 @@
 import { MemberRole, Prisma, PrismaClient } from "../../../../../generated/prisma/client";
 import { DeskRepository } from "../../domain/repositories";
 import { deskForDetailArgs, MyDeskForDetail, myDeskForDetailArgs, SchoolDeskForDetail, schoolDeskForDetailArgs, type DeskForDetail } from "../queries";
-import { CreateDeskData, CreateDeskInput, GetDesksInput,JoinDeskInput, LeaveDeskInput} from "../../application/dto";
+import { CreateDeskData, CreateDeskInput, GetDesksInput, JoinOrLeaveDeskInput} from "../../application/dto";
 import { SchoolForDetail } from "@/features/school/infrastructure/queries";
 import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 
@@ -60,15 +60,18 @@ export class PrismaDeskRepository implements DeskRepository {
     return updatedDesk;
   } 
 
-  async join(input: JoinDeskInput): Promise<void> {
-    const data: Prisma.MemberCreateInput = {
-      profile: { connect: { userId: input.userId } },
-      desk: { connect: { id: input.deskId } },
-      role: input.role === "CONTRIBUTOR" ? MemberRole.CONTRIBUTOR : input.role === "OWNER" ? MemberRole.OWNER : MemberRole.VIEWER,
-    };
-    await this.prisma.member.create ({ data });
+  async join(input: JoinOrLeaveDeskInput): Promise<void> {
+    if(input?.isJoining){
+      const data: Prisma.MemberCreateInput = {
+        profile: { connect: { userId: input.userId } },
+        desk: { connect: { id: input.deskId } },
+        role: input.role === "CONTRIBUTOR" ? MemberRole.CONTRIBUTOR : input.role === "OWNER" ? MemberRole.OWNER : MemberRole.VIEWER,
+      };
+      await this.prisma.member.create ({ data });
+
+    }
   }
-  async leave(input: LeaveDeskInput): Promise<void> {
+  async leave(input: JoinOrLeaveDeskInput): Promise<void> {
     await this.prisma.member.delete({
       where: { userId_deskId: { userId: input.userId, deskId: input.deskId } },
     });
@@ -120,5 +123,12 @@ export class PrismaDeskRepository implements DeskRepository {
       ...myDeskForDetailArgs,
      });
     return myDesk;
+  }
+  async getSchoolDesk(schoolId: string): Promise<SchoolDeskForDetail | null> {
+    const schoolDesk = await this.prisma.schoolDesk.findUnique({
+      where: { schoolId },
+      ...schoolDeskForDetailArgs,
+    });
+    return schoolDesk;
   }
 }

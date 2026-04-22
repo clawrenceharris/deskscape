@@ -51,7 +51,7 @@ export function DeskListItem ({
 
           
           <p>{desk.name}</p>
-          <AvatarGroup className="items-center">
+          <AvatarGroup  className="flex items-center">
             {desk.members.slice(0, 3).map((member) => (
               <ProfileButton disabled size="icon-sm" profile={member.profile} key={member.profile.userId}/>
             ))}

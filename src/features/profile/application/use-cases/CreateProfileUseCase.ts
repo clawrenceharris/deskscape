@@ -73,18 +73,17 @@ export class CreateProfileUseCase {
           avatarPath: uploadedAvatar?.path ?? null,
         });
 
-
-        // create user desk
-
-        await this.deskRepository.create({
-          name: `${displayName ?? username}'s Desk`,
-          schoolId: resolvedSchoolId ?? "",
-          isPublic: false,
-          creatorId: userId,
-          imageUrl: null,
-          imagePath: null,
-          description: null,
-        });
+        // join school desk
+        if(resolvedSchoolId){
+          const schoolDesk = await this.deskRepository.getSchoolDesk(resolvedSchoolId);
+          if(schoolDesk){
+            await this.deskRepository.join({
+              deskId: schoolDesk.desk.id,
+              userId: userId,
+              role: "CONTRIBUTOR"
+            });
+          }
+        }
         return { success: true as const, data: profile };
       } catch (error) {
         console.error("Error creating or updating profile", error);
