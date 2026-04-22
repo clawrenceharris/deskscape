@@ -21,7 +21,7 @@ export interface UseSearchResult<T> {
 }
 
 export function useSearch<T>(opts: UseSearchOptions<T>): UseSearchResult<T> {
-  const { data, filter, minQueryLength = 3, debounceMs = 250 } = opts;
+  const { data, filter, minQueryLength = 2, debounceMs = 250 } = opts;
 
   // Use refs to avoid dependency issues with unstable props
   const dataRef = useRef(data);

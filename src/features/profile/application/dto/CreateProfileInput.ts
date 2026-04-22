@@ -1,4 +1,4 @@
-export type CreateOrUpdateProfileInput = {
+export type CreateProfileInput = {
     userId: string;
     username: string;
     displayName?: string | null;

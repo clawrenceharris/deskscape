@@ -37,7 +37,7 @@ export function NotebookColumn({
   onMaterialIndexChange,
 }: NotebookColumnProps) {
   const { user } = useUser();
-  const { modals } = useModals();
+  const { modals: { "notebook:update": updateNotebookModal }} = useModals();
   const {data: notebook = null, isLoading: notebookLoading} = useNotebook(notebookId);
   const { makeVote, removeVote} = useMakeVote();
   const { setCurrentNotebookId } = useDeskContext();
@@ -97,7 +97,7 @@ export function NotebookColumn({
   };
   const handleEdit = () => {
     if (!notebook) return;
-    modals[NOTEBOOK_MODAL_TYPES.UPDATE].open(notebook.id);
+    updateNotebookModal.open(notebook.id);
   };
   const voteCount = useMemo(() => {
     return votes.reduce((acc, vote) => {

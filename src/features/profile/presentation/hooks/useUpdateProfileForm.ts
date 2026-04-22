@@ -2,7 +2,7 @@ import { updateProfileSchema } from "@/lib/validation";
 import { UpdateProfileFormValues } from "@/types/profile";
 import { useMutation } from "@tanstack/react-query";
 import { ProfileForDetail } from "../../infrastructure/queries";
-import { createOrUpdateProfileAction } from "@/actions/profile";
+import { updateProfileAction } from "@/actions/profile";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
@@ -28,17 +28,15 @@ export const useUpdateProfileForm = ({onSuccess, onError, profile}: UseUpdatePro
 
     const updateProfileMutation = useMutation({
         mutationFn: async(data: UpdateProfileFormValues) => {
-            const result = await createOrUpdateProfileAction({
+            const result = await updateProfileAction({
                 userId: profile.userId,
-                username: data.username ?? profile.username,
-                displayName: data.displayName,
-                avatarFile: data.avatarFile,
-                schoolId: data.schoolId ?? null,
+                data,
             });
-            if(result.success){
-                return result.data;
+            if(!result.success){
+                throw new ApplicationError(result.error);
             }
-            throw new ApplicationError(result.error);
+            return result.data;
+
         },
         onSuccess: (data) => {
             onSuccess?.(data);

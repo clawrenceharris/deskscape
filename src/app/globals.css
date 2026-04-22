@@ -155,15 +155,14 @@
   section {
     @apply bg-primary-foreground  p-5 rounded-xl border shadow-sm mb-8;
   }
-
-}
-
-@layer base{
-  .column-header{
-    @apply sticky  top-0 flex items-center justify-between px-4 h-16 py-2 w-full border-b
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
   }
 
 }
+
 @layer components {
 
   .page {
@@ -175,7 +174,9 @@
   .centered {
     @apply w-full h-full flex-1 flex items-center justify-center;
   }
-  
+   .column-header{
+    @apply sticky  top-0 flex items-center justify-between px-4 h-16 py-2 w-full border-b
+  }
   
 
 }

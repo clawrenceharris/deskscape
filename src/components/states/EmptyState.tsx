@@ -69,7 +69,7 @@ export function EmptyState({
     return (
       <>
         {onAction && actionLabel && (
-          <Button className="flex-1" variant={buttonVariant} onClick={onAction}>{buttonIcon}{actionLabel}</Button>
+          <Button  className="flex-1" variant={buttonVariant} onClick={onAction}>{buttonIcon}{actionLabel}</Button>
         )}
         {onSecondaryAction && secondaryActionLabel && (
           <Button className="flex-1" onClick={onSecondaryAction} variant={secondaryButtonVariant}>
@@ -95,14 +95,7 @@ export function EmptyState({
         {message && <ItemDescription>{message}</ItemDescription>}
       </ItemContent>
       <ItemActions>
-        {onAction && actionLabel && (
-          <Button onClick={onAction}>{actionLabel}</Button>
-        )}
-        {onSecondaryAction && secondaryActionLabel && (
-          <Button variant="outline" onClick={onSecondaryAction}>
-            {secondaryActionLabel}
-          </Button>
-        )}
+        {renderActions()}
       </ItemActions>
     </Item>
   );
@@ -120,6 +113,7 @@ export function EmptyState({
           height={510}
           className="w-full max-w-[200px] mx-auto"
           alt="Sad Notebook"
+          loading="eager"
           src={imageUrl ? imageUrl : "/images/error.png"}
         />
         <CardTitle className="text-2xl">{title}</CardTitle>
@@ -128,21 +122,22 @@ export function EmptyState({
         {message && <CardDescription>{message}</CardDescription>}
       </CardContent>
       <CardFooter>
-        <CardAction className="flex-1">{renderActions()}</CardAction>
+        {renderActions()}
       </CardFooter>
     </Card>
   );
 
   const renderDefault = () => (
-    <div className={className}>
-      <div className="flex flex-col w-full items-center justify-center px-4 text-center">
-        {icon && <div className="mb-4">{icon}</div>}
-        <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
+    <div className={cn("flex flex-col text-center", className)}>
+      <div>
+        {icon && <div className="mb-3">{icon}</div>}
+        <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
         {message && (
           <p className="text-muted-foreground mb-6 max-w-md">{message}</p>
         )}
-        {renderActions()}
+        
       </div>
+      <div className="flex justify-center">{renderActions()}</div>
     </div>
   );
 

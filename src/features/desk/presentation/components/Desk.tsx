@@ -4,24 +4,23 @@ import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { Plus } from "lucide-react";
 import {NotebookGridItem} from "./ui";
 import { useDesk } from "../hooks/useDesk";
-import { useNotebooksByDeskId } from "@/features/notebook/presentation/hooks";
 
 interface DeskProps {
   onNotebookClick: (notebook: NotebookForDetail) => void;
   useCase?: "default" | "user";
   selectedNotebookId?: string | null;
-  onSearchChange: (searchTerm: string) => void;
   onCreateNotebookClick: () => void;
+  notebooks: NotebookForDetail[];
 }
 export function Desk({
   selectedNotebookId,
   onNotebookClick,
   useCase = "default",
   onCreateNotebookClick,
+  notebooks,
 }: DeskProps){
   const { currentDeskId} = useDeskContext();
   const {data: desk = null, isLoading} = useDesk(currentDeskId ?? null);
-  const {data: notebooks = []} = useNotebooksByDeskId(currentDeskId ?? null);
   const { user } = useUser();
   
   if (isLoading) {
@@ -80,7 +79,7 @@ export function Desk({
   return (
     <>
       {notebooks.length > 0 ? (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] w-full gap-5 pb-20 px-5 max-w-7xl mx-auto">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] w-full gap-5 py-10 px-5 max-w-7xl mx-auto">
           {notebooks.map((n, index) => {
             return (
               <NotebookGridItem

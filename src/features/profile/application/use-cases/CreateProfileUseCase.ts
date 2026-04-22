@@ -1,29 +1,34 @@
-import { UserProfileRepository } from "../../domain/repositories";
+import { ProfileRepository } from "../../domain/repositories";
 import { AvatarStorage } from "../../domain/services";
-import { getUserErrorMessage } from "@/lib/utils/errors";
-import { CreateOrUpdateProfileInput, CreateOrUpdateProfileResult } from "../dto";
+import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
+import { CreateProfileInput } from "../dto";
 import { SchoolRepository } from "@/features/school/domain/repositories";
+import { ApplicationResultWithData } from "@/shared/kernel/Result";
+import { ProfileForDetail } from "../../infrastructure/queries";
+import { DeskRepository } from "@/features/desk/domain/repositories";
 
-export class CreateOrUpdateProfileUseCase {
+export class CreateProfileUseCase {
     constructor(
-      private readonly profileRepository: UserProfileRepository,
+      private readonly profileRepository: ProfileRepository,
       private readonly storage: AvatarStorage,
-      private readonly schoolRepository: SchoolRepository
+      private readonly schoolRepository: SchoolRepository,
+      private readonly deskRepository: DeskRepository
     ) {}
   
-    async execute(input: CreateOrUpdateProfileInput): Promise<CreateOrUpdateProfileResult> {
+    async execute(input: CreateProfileInput): Promise<ApplicationResultWithData<ProfileForDetail>> {
       const { userId, username, displayName, avatarFile , schoolId } = input;
       let uploadedAvatar: { path: string; url: string | null } | null = null;
   
       try {
-        const existingProfile = await this.profileRepository.getProfileByUserId(userId);
-
+        // upload avatar
         if (avatarFile) {
           uploadedAvatar = await this.storage.upload({
             userId,
             file: avatarFile,
           });
         }
+
+        // resolve school id
         const normalizedSchoolInput = schoolId?.trim() ?? "";
         let resolvedSchoolId: string | null = null;
 
@@ -53,16 +58,34 @@ export class CreateOrUpdateProfileUseCase {
             }
           }
         }
-  
+
+        
+
+
+
+        // create profile
         const profile = await this.profileRepository.upsert({
           userId: userId,
           username: username,
           schoolId: resolvedSchoolId,
           displayName: displayName ?? null,
-          avatarUrl: uploadedAvatar?.url ?? existingProfile?.avatarUrl ?? null,
-          avatarPath: uploadedAvatar?.path ?? existingProfile?.avatarPath ?? null,
+          avatarUrl: uploadedAvatar?.url ?? null,
+          avatarPath: uploadedAvatar?.path ?? null,
         });
-        return { success: true as const, profile };
+
+
+        // create user desk
+
+        await this.deskRepository.create({
+          name: `${displayName ?? username}'s Desk`,
+          schoolId: resolvedSchoolId ?? "",
+          isPublic: false,
+          creatorId: userId,
+          imageUrl: null,
+          imagePath: null,
+          description: null,
+        });
+        return { success: true as const, data: profile };
       } catch (error) {
         console.error("Error creating or updating profile", error);
         if (uploadedAvatar?.path) {
@@ -72,7 +95,7 @@ export class CreateOrUpdateProfileUseCase {
             console.error("Error removing avatar", error);
           }
         }
-        return { success: false as const, error: getUserErrorMessage(error) };
+        return { success: false as const, error: new ApplicationError(getUserErrorMessage(error)) };
         
       }
   }

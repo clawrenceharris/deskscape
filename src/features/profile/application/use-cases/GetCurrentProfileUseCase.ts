@@ -1,13 +1,13 @@
-import { UserProfileRepository } from "../../domain/repositories";
+import { ProfileRepository } from "../../domain/repositories";
 import { GetUserProfileInput, GetUserProfileResult } from "../dto";
 import { getUserErrorMessage } from "@/lib/utils/errors";
 
 export class GetCurrentProfileUseCase {
-    constructor(private readonly userProfileRepository: UserProfileRepository) {}
+    constructor(private readonly userProfileRepository: ProfileRepository) {}
 
     async execute({userId} : GetUserProfileInput): Promise<GetUserProfileResult> {
         try {
-            const profile =  await this.userProfileRepository.getProfileByUserId(userId);
+            const profile =  await this.userProfileRepository.getByUserId(userId);
             return {success: true, data: profile}
         } catch (error) {
             console.error(error);

@@ -1,2 +1,3 @@
 export * from "./checkUsernameAvailability";
-export * from "./createOrUpdateProfile";
+export * from "./updateProfileAction";
+export * from "./createProfileAction";

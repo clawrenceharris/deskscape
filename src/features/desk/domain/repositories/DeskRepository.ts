@@ -1,11 +1,16 @@
-import type { CreateDeskData, GetDesksInput } from "../../application/dto";
-import type { DeskForDetail } from "../../infrastructure/queries";
+import { SchoolForDetail } from "@/features/school/infrastructure/queries";
+import type { CreateDeskData, GetDesksInput, JoinDeskInput, LeaveDeskInput } from "../../application/dto";
+import type { DeskForDetail, MyDeskForDetail, SchoolDeskForDetail } from "../../infrastructure/queries";
+import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 
 export interface DeskRepository {
-  getDesks(input?: GetDesksInput): Promise<DeskForDetail[]>;
+  getAll(input?: GetDesksInput): Promise<DeskForDetail[]>;
   getById(id: string): Promise<DeskForDetail | null>;
   create(input: CreateDeskData): Promise<DeskForDetail>;
-  updateDesk(id: string, input: Partial<CreateDeskData>): Promise<DeskForDetail>;
-  deleteDesk(id: string): Promise<void>;
-
+  update(id: string, input: Partial<CreateDeskData>): Promise<DeskForDetail>;
+  delete(id: string): Promise<void>;
+  join(input: JoinDeskInput): Promise<void>;
+  leave(input: LeaveDeskInput): Promise<void>;
+  createSchoolDesk(school: SchoolForDetail): Promise<SchoolDeskForDetail>;
+  createMyDesk(profile: ProfileForDetail): Promise<MyDeskForDetail>;
 }

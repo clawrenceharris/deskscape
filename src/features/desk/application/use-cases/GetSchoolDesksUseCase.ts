@@ -5,6 +5,6 @@ export class GetSchoolDesksUseCase {
     constructor(private readonly deskRepository: DeskRepository) {}
 
     async execute(schoolId: string): Promise<DeskForDetail[]> {
-        return this.deskRepository.getDesks({ where: { schoolId } });
+        return this.deskRepository.getAll({ where: { schoolId } });
     }
 }

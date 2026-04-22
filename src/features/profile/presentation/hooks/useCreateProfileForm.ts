@@ -4,11 +4,14 @@ import { CreateProfileFormValues } from "@/types/profile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
-import {createOrUpdateProfileAction as createProfileAction } from "@/actions/profile";
 import { useAsyncAction } from "@/hooks";
 import { ProfileForDetail } from "../../infrastructure/queries";
 import { useChangeUsername } from "./";
 import { useAuth } from "@/features/auth/presentation/hooks";
+import { createProfileAction } from "@/actions/profile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
+import { deskKeys, profileKeys } from "@/lib/queries";
 
 type UseCreateProfileFormProps = {
     onSuccess?: (profile: ProfileForDetail) => void;
@@ -16,8 +19,8 @@ type UseCreateProfileFormProps = {
     userId: string;
 }
 export function useCreateProfileForm({userId, onSuccess, onError}: UseCreateProfileFormProps) {
-    const {executeWithData: execute, isLoading, error} = useAsyncAction<ProfileForDetail>();
     const { user } = useAuth();
+    const queryClient = useQueryClient();
     const form = useForm<CreateProfileFormValues>({
         resolver: zodResolver(createProfileSchema),
         defaultValues: {
@@ -27,26 +30,39 @@ export function useCreateProfileForm({userId, onSuccess, onError}: UseCreateProf
             schoolId: "",
         },
     });
-    
-    useChangeUsername({userId: user?.id ?? null, form});
-    const createProfile = useCallback(async(data: CreateProfileFormValues) => {
+    const createProfileMutation = useMutation({
+        mutationKey: ["createProfile"],
+        mutationFn: async(data: CreateProfileFormValues) => {
+
         
-        
-        const result = await execute(() => createProfileAction({
+        const result = await createProfileAction({
             userId,
             username: data.username,
             displayName: data.displayName,
             avatarFile: data.avatarFile,
             schoolId: data.schoolId,
-        }));
-        if(result.success){
-            return onSuccess?.(result.data);
+        });
+        if(!result.success){
+            throw new ApplicationError(result.error);
         }
-        form.setError("root", { message: result.error });
-        onError?.(result.error);
-       
+        return result.data;
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: profileKeys.detail(userId) });
+            queryClient.invalidateQueries({ queryKey: deskKeys.listByUserId(userId) });
+            onSuccess?.(data);
+        },
+        onError: (error) => {
+            form.setError("root", { message: getUserErrorMessage(error) });
+            onError?.(getUserErrorMessage(error));
+        },
+    })
+    useChangeUsername({userId: user?.id ?? null, form});
+    const createProfile = useCallback(async(data: CreateProfileFormValues) => {
+        if(!form.formState.isValid) return;
+        createProfileMutation.mutate(data);
         
-        
-    }, [execute, form,userId, onError, onSuccess]);
-    return {form, isLoading, error, createProfile};
+
+    }, [createProfileMutation, form]);
+    return {form, isLoading: createProfileMutation.isPending, error: createProfileMutation.error, createProfile};
 }

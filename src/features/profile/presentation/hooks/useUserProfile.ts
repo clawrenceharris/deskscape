@@ -1,10 +1,13 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { getProfile } from "../../server";
 import { profileKeys } from "@/lib/queries/keys";
 import { ApplicationError } from "@/lib/utils/errors";
-
-export function useUserProfile(userId: string | null) {
+import { ProfileForDetail } from "../../infrastructure/queries";
+import { withTimeout } from "@/lib/utils/withTimeout";
+const PROFILE_QUERY_TIMEOUT_MS = 10_000;
+    
+export function useUserProfile(userId: string | null): UseQueryResult<ProfileForDetail | null> {
    return  useQuery({
         queryKey: profileKeys.detail(userId ?? ""),
         
@@ -12,12 +15,15 @@ export function useUserProfile(userId: string | null) {
             if(!userId){
                 throw new Error("userId is required to fetch profile.");
             }
-            const result = await getProfile(userId);
+            const result = await withTimeout(getProfile(userId), 
+            PROFILE_QUERY_TIMEOUT_MS, 
+            "Loading profile timed out. Please try again.");
             if(!result.success){
                 throw new ApplicationError(result.error);
             }
             return result.data;
         },
+        
         enabled: !!userId,
     });
 }

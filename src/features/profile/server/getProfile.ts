@@ -1,13 +1,15 @@
 "use server";
 import { makeGetProfileUseCase } from "@/composition/profile";
-import { GetUserProfileResult } from "../application/dto";
+import { ProfileForDetail } from "../infrastructure/queries";
+import { ActionResultWithData } from "@/actions";
 
-export async function getProfile(userId: string): Promise<GetUserProfileResult> {
+export async function getProfile(userId: string): Promise<ActionResultWithData<ProfileForDetail | null>> {
     const useCase = await makeGetProfileUseCase();
     const result = await useCase.execute(userId);
     if(!result.success){
-      return { success: false, error: result.error };
+      return { success: false as const, error: result.error.message };
+
     }
-    return { success: true, data: result.data };
+    return result;
  
 }

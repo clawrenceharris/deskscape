@@ -1,8 +1,9 @@
 "use client";
 import { MotionProps } from "motion/react";
 import { getShortDate } from "@/lib/utils/";
-import { Avatar, AvatarImage, AvatarFallback, AvatarGroup, Card, CardFooter, CardHeader } from "@/components/ui";
+import { Avatar, AvatarImage, AvatarFallback, AvatarGroup, Card, CardFooter, CardHeader, AvatarGroupCount } from "@/components/ui";
 import { DeskForCard } from "@/features/desk/infrastructure/queries";
+import { ProfileButton } from "@/components/shared";
 
 interface DeskListItemProps extends MotionProps {
   onClick?: (desk: DeskForCard) => void;
@@ -41,7 +42,7 @@ export function DeskListItem ({
           backgroundSize: "cover",
           backgroundImage: desk.imageUrl ? `url(${desk.imageUrl})` : "url(https://i.ibb.co/JcYbrj5/school-background2.png)",
         }}
-        className="flex h-30 relative  "
+        className="flex h-30 relative"
       >
         <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/60 w-full h-full" />
          
@@ -50,28 +51,34 @@ export function DeskListItem ({
 
           
           <p>{desk.name}</p>
-          <p>{desk.notebooks.length} items</p>
+          <AvatarGroup className="items-center">
+            {desk.members.slice(0, 3).map((member) => (
+              <ProfileButton disabled size="icon-sm" profile={member.profile} key={member.profile.userId}/>
+            ))}
+            {desk.members.length > 3 && <AvatarGroupCount className="text-foreground size-[20px] bg-secondary-foreground">+{desk.members.length - 3}</AvatarGroupCount>}
+          </AvatarGroup>
+         
         </div>
       </CardHeader>
-      <CardFooter className="flex justify-between pb-4 w-full rounded-b-xl bg-primary-foreground">
+      <CardFooter className="flex justify-between pb-4 w-full line-clamp-1 rounded-b-xl bg-primary-foreground">
        
         {
           lastItem ? (
-              <p className="text-muted-foreground">{`${lastItem.creator.displayName || lastItem.creator.username} posted ${lastItem.title} ${getShortDate(new Date(lastItem.createdAt))}`}</p>
+              <p className="text-muted-foreground">{`${lastItem.creator.displayName || lastItem.creator.username} posted`}
+              {" "}
+              <span className="inline-block max-w-[150px] align-bottom truncate font-bold">
+                {lastItem.title}
+              </span>
+              {" "}
+              {`${getShortDate(new Date(lastItem.createdAt))}`}
+              </p>
           )
             :
              ( <p className="text-muted-foreground">No activity yet</p>
             
             )
         }
-         <AvatarGroup>
-          {desk.members.map((member) => (
-            <Avatar key={member.profile.username}>
-              <AvatarImage src={member.profile.avatarUrl ?? undefined} />
-              <AvatarFallback>{member.profile.displayName?.charAt(0) || member.profile.username.charAt(0)}</AvatarFallback>
-            </Avatar>
-          ))}
-        </AvatarGroup>
+        
       </CardFooter>
     </Card>
   );

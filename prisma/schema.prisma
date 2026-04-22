@@ -23,63 +23,97 @@ model Profile {
   notebooks    Notebook[]
   materials    Material[] // materials this profile has created
   downloads    Download[]
+  myDesk       UserDesk? // the profile's personal desk
 
   @@index([schoolId])
 }
 
 model Desk {
-  id          String     @id @default(cuid())
-  creatorId   String
+  id          String      @id @default(cuid())
+  creatorId   String      @default("system")
   name        String
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  schoolId    String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  schoolId    String?
   description String?
   imageUrl    String?
   imagePath   String?
-  isPublic    Boolean    @default(false)
-  school      School     @relation(fields: [schoolId], references: [id])
-  creator     Profile    @relation("DeskCreator", fields: [creatorId], references: [userId])
-  members     Member[]    // profiles that are members of this desk
+  isPublic    Boolean     @default(false)
+  school      School?      @relation(fields: [schoolId], references: [id])
+  creator     Profile     @relation("DeskCreator", fields: [creatorId], references: [userId], onDelete: SetDefault)
+  members     Member[] // profiles that are members of this desk
   notebooks   Notebook[] // notebooks in this desk
+  schoolDesk  SchoolDesk?
+  userDesks   UserDesk[]
 
   @@index([creatorId])
   @@index([schoolId])
 }
 
 model Member {
-  id        String     @id @default(cuid())
-  profileId String
-  deskId    String
-  profile   Profile    @relation(fields: [profileId], references: [userId], onDelete: Cascade)
-  desk      Desk       @relation(fields: [deskId], references: [id], onDelete: Cascade)
-  role      MemberRole @default(VIEWER)
+  id      String     @id @default(cuid())
+  userId  String
+  deskId  String
+  profile Profile    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  desk    Desk       @relation(fields: [deskId], references: [id], onDelete: Cascade)
+  role    MemberRole @default(VIEWER)
 
-  @@unique([profileId, deskId])
-  @@index([profileId])
+  @@unique([userId, deskId])
+  @@index([userId])
   @@index([deskId])
 }
 
 model Download {
-  userId     String  @unique
-  profile    Profile @relation(fields: [userId], references: [userId], onDelete: NoAction)
+  userId     String   @unique
+  profile    Profile  @relation(fields: [userId], references: [userId], onDelete: NoAction)
   notebookId String
   createdAt  DateTime @default(now()) @map("created_at")
   notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
   @@id([userId, notebookId])
   @@index([notebookId])
   @@index([userId])
 }
 
 model School {
-  id       String    @id @default(cuid())
-  name     String
-  students Profile[] // profiles in this school
-  desks    Desk[] // desks in this school
+  id           String      @id @default(cuid())
+  name         String
+  students     Profile[] // profiles in this school
+  desks        Desk[] // desks in this school
+  createdAt    DateTime    @default(now()) @map("created_at")
+  schoolDeskId String?
+  schoolDesk   SchoolDesk? // the school's official public desk
 
   @@index([name])
 }
 
+model UserDesk {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      Profile  @relation(fields: [userId], references: [userId])
+  deskId    String   @unique
+  desk      Desk     @relation(fields: [deskId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, deskId])
+  @@index([userId])
+  @@index([deskId])
+}
+
+model SchoolDesk {
+  id        String   @id @default(cuid())
+  schoolId  String   @unique
+  school    School   @relation(fields: [schoolId], references: [id])
+  deskId    String   @unique
+  desk      Desk     @relation(fields: [deskId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([schoolId, deskId])
+  @@index([schoolId])
+  @@index([deskId])
+}
 
 model Notebook {
   id          String     @id @default(cuid())
@@ -108,7 +142,6 @@ model Vote {
   isUpvote   Boolean  @default(true)
   notebook   Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
 
-
   @@id([userId, notebookId])
   @@index([userId])
 }
@@ -127,6 +160,7 @@ model Material {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   notebook   Notebook     @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
   @@index([authorId])
   @@index([notebookId])
 }

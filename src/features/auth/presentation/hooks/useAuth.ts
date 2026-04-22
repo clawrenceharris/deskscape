@@ -13,26 +13,24 @@ export function useAuth() {
     const {isLoading, execute} = useAsyncAction<ActionResult>();
     const [user, setUser] = useState<User | null>(null)
     useEffect(() => {
-        async function fetchUser(){
-            try{
-                const {data, error} = await supabase.auth.getUser();
-                if(error){
-                   throw error;
-                }
-                setUser(data.user);
-            }
-            catch{
-                setUser(null)
-            }
+        const subscription = supabase.auth.onAuthStateChange((_, session) => {
+        if(session?.user){
+            setUser(session.user);
         }
-        fetchUser()
-    },[]);
+        else{
+            setUser(null);
+        }
+    });
+    return () => subscription.data.subscription.unsubscribe();
+            
+},[]);
     
     const signOut = useCallback(async () => {
         const result = await execute(() => signOutAction());
         if(!result.success) {
             toast.error(result.error);
         }
+        setUser(null);
     }, [execute]);
     return {
         signOut,

@@ -9,25 +9,8 @@ import { updateNotebookAction } from "@/actions/notebook";
 import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
 import { useCallback, useState, useEffect } from "react";
 import { notebookKeys } from "@/lib/queries";
-
+import { withTimeout } from "@/lib/utils/withTimeout";
 const UPDATE_DESK_ITEM_TIMEOUT_MS = 60_000;
-
-async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
-    return await new Promise<T>((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-            reject(new ApplicationError(timeoutMessage));
-        }, timeoutMs);
-        promise
-            .then((value) => {
-                clearTimeout(timeoutId);
-                resolve(value);
-            })
-            .catch((error) => {
-                clearTimeout(timeoutId);
-                reject(error);
-            });
-    });
-}
 
 type UseUpdateNotebookFormProps = {
     notebookId: string | null;

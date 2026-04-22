@@ -21,7 +21,7 @@ export function useCreateDeskForm ({userId, onSuccess, onError}: UseCreateDeskFo
         resolver: zodResolver(createDeskSchema),
         defaultValues: {
             name: "",
-            schoolId: profile?.schoolId ?? "",
+            schoolId: profile?.school?.id ?? "",
             imageFile: null,
             isPublic: true,
             description: "",

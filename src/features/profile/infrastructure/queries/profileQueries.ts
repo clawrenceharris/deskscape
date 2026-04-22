@@ -2,7 +2,11 @@ import { deskForDetailArgs } from "@/features/desk/infrastructure/queries";
 import { Prisma } from "@/lib/db/prisma";
 
 export const profileForDetailArgs = {
-    include: {
+    select: {
+        userId: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
         school: {
             select: {
                 id: true,
@@ -28,7 +32,15 @@ export const profileForDetailArgs = {
                 materials: true,
             },
         },
-        
+        myDesk: {
+            select:{
+                desk:{
+                    ...deskForDetailArgs,
+                }
+            }
+                
+                
+        },
     },
     
   } satisfies Prisma.ProfileDefaultArgs;

@@ -1,3 +1,4 @@
+import { deskForDetailArgs } from "@/features/desk/infrastructure/queries";
 import { Prisma } from "@/lib/db/prisma";
 
 export const schoolForDetailArgs = {
@@ -10,6 +11,13 @@ export const schoolForDetailArgs = {
                 username: true,
                 displayName: true,
                 avatarUrl: true,
+            },
+        },
+        schoolDesk: {
+            select: {
+                desk: {
+                    ...deskForDetailArgs,
+                },
             },
         },
         desks: true,

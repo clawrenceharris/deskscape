@@ -7,7 +7,7 @@ export class GetDesksUseCase {
 
     async execute(input?: GetDesksInput): Promise<GetDesksResult> {
         try {
-            const desks = await this.deskRepository.getDesks(input);
+            const desks = await this.deskRepository.getAll(input);
             return { success: true, data: desks };
         } catch (error) {
             console.error(error);

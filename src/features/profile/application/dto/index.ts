@@ -1,5 +1,6 @@
 export * from "./CreateOrUpdateProfileResult";
-export * from "./CreateOrUpdateProfileInput";
+export * from "./UpdateProfileInput";
 export * from "./CheckUsernameAvailabilityResult";
 export * from "./GetUserProfileResult";
 export * from "./GetUserProfileInput";
+export * from "./CreateProfileInput";

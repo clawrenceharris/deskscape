@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/queries";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/presentation/hooks";
-import { Q, RIGHT_MODES } from "@/app/(app)/home/_providers/HomeNavigationProvider";
+import { Q, RIGHT_MODES } from "@/app/providers";
 
 type ProfileColumnProps = {
   userId: string;

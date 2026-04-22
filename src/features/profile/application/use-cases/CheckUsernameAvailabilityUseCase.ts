@@ -1,13 +1,13 @@
 import { getUserErrorMessage } from "@/lib/utils/errors";
-import { UserProfileRepository } from "../../domain/repositories";
+import { ProfileRepository } from "../../domain/repositories";
 import { CheckUsernameAvailabilityResult } from "../dto";
 
 export class CheckUsernameAvailabilityUseCase {
-    constructor(private readonly userProfileRepository: UserProfileRepository) {}
+    constructor(private readonly userProfileRepository: ProfileRepository) {}
 
     async execute(username: string, userId: string): Promise<CheckUsernameAvailabilityResult> {
         try{
-        const profile = await this.userProfileRepository.getProfileByUsername(username);
+        const profile = await this.userProfileRepository.getByUsername(username);
         if(profile && profile.userId !== userId) {
             return { isAvailable: false, success: true };
         }

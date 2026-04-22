@@ -1,3 +1,4 @@
 export * from "./makeGetProfileUseCase";
-export * from "./makeCreateOrUpdateProfileUseCase";
+export * from "./makeUpdateProfileUseCase";
 export * from "./makeCheckUsernameAvailabilityUseCase";
+export * from "./makeCreateProfileUseCase";

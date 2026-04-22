@@ -34,7 +34,8 @@ export const deskForDetailArgs = {
   } satisfies Prisma.DeskDefaultArgs;
   
   export const deskForCardArgs = {
-    include: {
+    select: {
+      id: true,
       notebooks: {
         take: 99,
         select: {
@@ -77,6 +78,23 @@ export const deskForDetailArgs = {
       },
     },
   } satisfies Prisma.DeskDefaultArgs;
+  export const schoolDeskForDetailArgs = {
+    select: {
+      desk: {
+        ...deskForDetailArgs,
+      }
+    },
+  } satisfies Prisma.SchoolDeskDefaultArgs;
+  export const myDeskForDetailArgs = {
+    select: {
+      desk:{
+        ...deskForDetailArgs,
+      },
+    },
+  } satisfies Prisma.UserDeskDefaultArgs;
+
   
   export type DeskForDetail = Prisma.DeskGetPayload<typeof deskForDetailArgs>;
+  export type SchoolDeskForDetail = Prisma.SchoolDeskGetPayload<typeof schoolDeskForDetailArgs>;
   export type DeskForCard = Prisma.DeskGetPayload<typeof deskForCardArgs>;
+  export type MyDeskForDetail = Prisma.UserDeskGetPayload<typeof myDeskForDetailArgs>;

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
-import { ModalProvider, QueryProvider ,ThemeProvider} from "./providers";
-import RootLayoutWrapper from "./_components/RootLayoutWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import { Header } from "@/components/shared";
+import { ModalProvider, QueryProvider, ThemeProvider, UserProvider } from "./providers";
 
 export const metadata: Metadata = {
   title: "DeskShare",
@@ -43,9 +43,14 @@ export default async function RootLayout({
             disableTransitionOnChange={false}
           >
             <ModalProvider>
-              <RootLayoutWrapper>           
-                {children}   
-              </RootLayoutWrapper>
+              <UserProvider>              
+                <div className="page">
+                  <Header/>
+                  <main>
+                    {children}
+                  </main> 
+                </div>
+              </UserProvider>
               
             </ModalProvider>
             <Toaster />

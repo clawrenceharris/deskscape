@@ -7,8 +7,7 @@ import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
 import { toast } from "sonner";
 import { NotebookVote } from "../../infrastructure/queries/notebookQueries";
 import { useUser } from "@/app/providers";
-import { notebookKeys, deskKeys } from "@/lib/queries";
-import { DeskForDetail } from "@/features/desk/infrastructure/queries/deskQueries";
+import { notebookKeys } from "@/lib/queries";
 
 export function useVotes(notebookId: string | null) {
     const queryClient = useQueryClient();
@@ -44,59 +43,6 @@ export const useMakeVote = () => {
             }
         },
         onMutate: (variables) => {
-            queryClient.setQueryData(deskKeys.detail(variables.deskId), (old: DeskForDetail) => {
-                if (!old) return old;
-                return {
-                    ...old,
-                    notebooks: old.notebooks.map((notebook) => {
-                        if (notebook.id !== variables.notebookId) return notebook;
-
-                        // Find if this user has already voted and what value
-                        const existingVoteIndex = notebook.votes.findIndex(v => v.userId === user.id);
-                        const isRemovingVote = variables.isUpvote === null;
-                        const newVoteObj = {
-                            notebookId: variables.notebookId,
-                            userId: user.id,
-                            isUpvote: variables.isUpvote as boolean
-                        };
-
-                        let newVotes;
-                        if (existingVoteIndex !== -1) {
-                            // User has a previous vote
-                            if (isRemovingVote) {
-                                // Remove the user's vote (change by -1)
-                                newVotes = [
-                                    ...notebook.votes.slice(0, existingVoteIndex),
-                                    ...notebook.votes.slice(existingVoteIndex + 1)
-                                ];
-                            } else {
-                                // User is toggling vote (maybe up to down or vice versa)
-                                // If the value is the same, do nothing (shouldn't happen here)
-                                // If the value changes (up <-> down), treat as -1 for old +1 for new = net +2 or -2
-                                newVotes = [
-                                    ...notebook.votes.slice(0, existingVoteIndex),
-                                    { ...notebook.votes[existingVoteIndex], isUpvote: variables.isUpvote },
-                                    ...notebook.votes.slice(existingVoteIndex + 1)
-                                ];
-                            }
-                        } else {
-                            // User didn't vote yet
-                            if (!isRemovingVote) {
-                                // Add the new vote (change by +1)
-                                newVotes = [...notebook.votes, newVoteObj];
-                            } else {
-                                // No vote to remove, do nothing
-                                newVotes = notebook.votes;
-                            }
-                        }
-
-                        return {
-                            ...notebook,
-                            votes: newVotes,
-                        };
-                    }),
-                };
-            });
             // Optimistic update for the vote, handling vote toggle/remove/add
             queryClient.setQueryData(notebookKeys.votes(variables.notebookId), (old: NotebookVote[]) => {
                 if (!old) return [];
@@ -124,16 +70,14 @@ export const useMakeVote = () => {
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({queryKey: notebookKeys.votes(variables.notebookId)});
             queryClient.invalidateQueries({queryKey: notebookKeys.listByUserId(user.id)});
-            queryClient.invalidateQueries({queryKey: deskKeys.detail(variables.deskId)});
+            queryClient.invalidateQueries({queryKey: notebookKeys.listByDeskId(variables.deskId)});
 
         },
         onError: (error, variables) => {
             // Rollback optimistic update by invalidating/re-fetching the votes query
             queryClient.invalidateQueries({queryKey: notebookKeys.votes(variables.notebookId)});
-            queryClient.invalidateQueries({queryKey: deskKeys.detail(variables.deskId)});
             queryClient.invalidateQueries({queryKey: notebookKeys.listByUserId(user.id)});
-
-
+            queryClient.invalidateQueries({queryKey: notebookKeys.listByDeskId(variables.deskId)});
             toast.error(getUserErrorMessage(error));
         },
     });
@@ -148,29 +92,19 @@ export const useMakeVote = () => {
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({queryKey: notebookKeys.votes(variables.notebookId)});
-            queryClient.invalidateQueries({queryKey: deskKeys.detail(variables.deskId)});
+            queryClient.invalidateQueries({queryKey: notebookKeys.listByDeskId(variables.deskId)});
             queryClient.invalidateQueries({queryKey: notebookKeys.listByUserId(user.id)});
+
+            
         },
         onError: (error, variables) => {
             queryClient.invalidateQueries({queryKey: notebookKeys.votes(variables.notebookId)});
-            queryClient.invalidateQueries({queryKey: deskKeys.detail(variables.deskId)});
+            queryClient.invalidateQueries({queryKey: notebookKeys.listByDeskId(variables.deskId)});
             queryClient.invalidateQueries({queryKey: notebookKeys.listByUserId(user.id)});
-
             toast.error(getUserErrorMessage(error));
         },
         onMutate: (variables) => {
-            queryClient.setQueryData(deskKeys.detail(variables.deskId), (old: DeskForDetail) => {
-                if(!old) return old;
-                return {
-                    ...old,
-                    notebooks: old.notebooks.map((notebook) => {
-                        if(notebook.id === variables.notebookId){
-                            return { ...notebook, votes: notebook.votes.filter((vote) => vote.userId !== user.id) };
-                        }
-                        return notebook;
-                    }),
-                };
-            });
+            
             queryClient.setQueryData(notebookKeys.votes(variables.notebookId), (old: NotebookVote[]) => {
                 if (!old) return [];
                 return  old.filter((vote) => vote.userId !== user.id);

@@ -2,12 +2,13 @@ import { getUserErrorMessage } from "@/lib/utils/errors";
 import { DeskRepository } from "../../domain/repositories";
 import { DeskStorage } from "../../domain/services";
 import { CreateDeskInput } from "../dto";
-import { CreateDeskResult } from "../dto/CreateDeskResult";
+import { ApplicationError, ApplicationResultWithData } from "@/shared/kernel";
+import { DeskForDetail } from "../../infrastructure/queries";
 
 export class CreateDeskUseCase {
   constructor(private readonly deskRepository: DeskRepository, private readonly storage: DeskStorage) {}
 
-  async execute(input: CreateDeskInput): Promise<CreateDeskResult> {
+  async execute(input: CreateDeskInput): Promise<ApplicationResultWithData<DeskForDetail>> {
     const { name, schoolId, imageFile, isPublic, creatorId } = input;
     let uploadedImage: { path: string; url: string | null } | null = null;
   
@@ -22,7 +23,6 @@ export class CreateDeskUseCase {
           isPublic: isPublic ?? true,
           description: null,
         });
-
         if (imageFile) {
           uploadedImage = await this.storage.uploadImage({
             deskId: desk.id,
@@ -30,11 +30,12 @@ export class CreateDeskUseCase {
             userId: creatorId,
           });
         }
-        await this.deskRepository.updateDesk(desk.id,{
+        await this.deskRepository.update(desk.id,{
           imageUrl: uploadedImage?.url ?? null,
           imagePath: uploadedImage?.path ?? null,
+          
         });
-        return { success: true as const, desk };
+        return { success: true as const, data: desk };
         
       } catch (error) {
         if (uploadedImage?.path) {
@@ -45,7 +46,7 @@ export class CreateDeskUseCase {
           }
         }
         console.log("error", error);
-        return { success: false as const, error: getUserErrorMessage(error) };
+        return { success: false as const, error: new ApplicationError(getUserErrorMessage(error)) };
         
       }
   }

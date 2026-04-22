@@ -7,6 +7,7 @@ import { loginAction } from "@/actions/auth/loginAction";
 import { getUserErrorMessage } from "@/lib/utils/errors";
 import { useRouter } from "next/navigation";
 import { useAsyncAction } from "@/hooks";
+import { getCurrentUser } from "../../server";
 
 export const useLoginForm = () => {
     const { executeWithData: execute } = useAsyncAction();
@@ -21,7 +22,10 @@ export const useLoginForm = () => {
     const login = async (data: LoginFormValues) => {
         const result = await execute(() => loginAction(data));
         if(result.success) {
-            router.push("/home");
+            const user = await getCurrentUser();
+            if(user) {
+                router.push("/home");
+            }
             return result.data;
         }
         form.setError("root", { message: getUserErrorMessage(result.error) });

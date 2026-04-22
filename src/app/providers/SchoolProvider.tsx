@@ -1,5 +1,6 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useUser } from "./UserProvider";
 
 type SchoolContextType = {
   currentSchoolId: string | null;
@@ -12,7 +13,15 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 
 export function SchoolProvider({ children }: SchoolProviderProps) {
   const [currentSchoolId, setCurrentSchoolId] = useState<string | null>(null);
-
+  const { profile } = useUser();
+  useEffect(() => {
+    if(!profile){
+      return;
+    }
+    const schoolId = profile.school?.id;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentSchoolId(schoolId ?? null);
+  }, [profile]);
   return <SchoolContext.Provider value={{ 
     currentSchoolId,
     setCurrentSchoolId,
@@ -21,7 +30,7 @@ export function SchoolProvider({ children }: SchoolProviderProps) {
     </SchoolContext.Provider>;
 }
 
-export function useSchool() {
+export function useSchoolContext() {
   const context = useContext(SchoolContext);
   if (!context) throw new Error("useSchool must be used within a SchoolProvider");
   return context;

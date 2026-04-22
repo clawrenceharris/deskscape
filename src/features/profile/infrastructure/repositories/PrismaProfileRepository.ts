@@ -1,19 +1,19 @@
 import { PrismaClientType } from "@/lib/db/prisma";
-import { UserProfileRepository } from "../../domain/repositories";
+import { ProfileRepository } from "../../domain/repositories";
 import { CreateOrUpdateProfileData } from "./types";
 import { ProfileForDetail, profileForDetailArgs } from "../queries";
 
-export class PrismaUserProfileRepository implements UserProfileRepository {
+export class PrismaProfileRepository implements ProfileRepository {
     constructor(private readonly prisma: PrismaClientType) {}
    
-    async createProfile(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
+    async create(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
         const newProfile = await this.prisma.profile.create({
             data,
             ...profileForDetailArgs,
         });
         return newProfile;
     }
-    async updateProfile(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
+    async update(data: CreateOrUpdateProfileData): Promise<ProfileForDetail> {
        
         const newProfile =await this.prisma.profile.update({
             where: { userId: data.userId },
@@ -22,7 +22,7 @@ export class PrismaUserProfileRepository implements UserProfileRepository {
         });
         return newProfile;
     }
-    async deleteProfile(userId: string): Promise<void> {
+    async delete(userId: string): Promise<void> {
         await this.prisma.profile.delete({
             where: { userId },
         });
@@ -39,7 +39,7 @@ export class PrismaUserProfileRepository implements UserProfileRepository {
         });
         return profile ? true : false;
     }
-    async getProfileByUsername(username: string): Promise<ProfileForDetail | null> {
+    async getByUsername(username: string): Promise<ProfileForDetail | null> {
        const profile = await this.prisma.profile.findFirst({
         where: { username },
         ...profileForDetailArgs,
@@ -48,7 +48,7 @@ export class PrismaUserProfileRepository implements UserProfileRepository {
        return profile ?? null;
     }
 
-    async getProfileByUserId(userId: string): Promise<ProfileForDetail | null> {
+    async getByUserId(userId: string): Promise<ProfileForDetail | null> {
         const profile = await this.prisma.profile.findUnique({
             where: { userId },
             ...profileForDetailArgs,

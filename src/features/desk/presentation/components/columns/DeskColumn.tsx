@@ -12,6 +12,10 @@ import { useDesk } from "../../hooks/useDesk";
 import { DESK_MODAL_TYPES } from "../modals";
 import { DeskForCard } from "@/features/desk/infrastructure/queries";
 import { useModals } from "@/hooks/useModals";
+import { SearchBar } from "@/components/shared";
+import { useSearch } from "@/hooks";
+import { useCallback, useState } from "react";
+import { useNotebooksByDeskId } from "@/features/notebook/presentation/hooks/useNotebooks";
 
 interface DeskColumnProps extends ColumnProps {
   deskId: string | null;
@@ -25,11 +29,30 @@ export function DeskColumn ({
 
   ...props
 }: DeskColumnProps) {
-  const {data: currentDesk = null, isLoading} = useDesk(deskId);
-  const { user } = useUser();
-  const { modals } = useModals();
- 
-  
+  const {data: desk, isLoading} = useDesk(deskId);
+  const { user, profile } = useUser();
+  const { modals: { "desk:create": createDeskModal }} = useModals();
+  const { modals: { "notebook:create": createNotebookModal }} = useModals();
+
+
+  function filterNotebooks(
+    notebook: NotebookForDetail,
+    search: string
+  ): boolean {
+    return notebook.title.toLowerCase().includes(search.toLowerCase());
+  } 
+  const {data: notebooks = []} = useNotebooksByDeskId(deskId);
+
+  const {
+    query,
+    clearResults,
+    search: searchNotebooks,
+    results: filteredNotebooks,
+  } = useSearch<NotebookForDetail>({
+    filter: (notebook, q) => filterNotebooks(notebook, q),
+    data: notebooks,
+  });
+  const isMyDesk = desk && desk.id === profile.myDesk?.desk.id;
   if (isLoading) {
     return (
       <Column {...props}>
@@ -38,9 +61,9 @@ export function DeskColumn ({
     );
   }
 
-  if (!currentDesk) {
+  if (!desk) {
     return (
-      <Column title={""} {...props}>
+      <Column {...props}>
         <div className="h-full flex-1 flex-col flex items-center justify-center">  
           <EmptyState 
             title="Nothing to see here..." 
@@ -49,7 +72,7 @@ export function DeskColumn ({
             message="Select a Desk on the left to see its contents or create a new one" 
             buttonVariant="tertiary"
             buttonIcon={<Plus strokeWidth={3}/>}
-            onAction={modals[DESK_MODAL_TYPES.CREATE].open}
+            onAction={createDeskModal.open}
             actionLabel="Create a new desk"
           />
         </div>
@@ -58,34 +81,52 @@ export function DeskColumn ({
   }
  
   const headerRight = (
-     
-      <Button
-        onClick={() => modals[NOTEBOOK_MODAL_TYPES.CREATE].open(currentDesk.id)}
-        size="icon"
-        variant="primary"
-      >
-        <Plus strokeWidth={3}/>
-      </Button>
+     <div className="flex items-center gap-2">
+        <SearchBar
+          value={query}
+          expandedWidthClassName="w-65"
+          placeholder="Search notebooks"
+          onChange={searchNotebooks}
+          
+        />
+        <Button
+          onClick={() => createNotebookModal.open(desk.id)}
+          size="icon"
+          variant="primary"
+        >
+          <Plus strokeWidth={3}/>
+        </Button>
+      </div>
   );
 
   return (
     <Column
-      title={currentDesk.name}
-      showsHeader={currentDesk != null}
+      title={isMyDesk ? "Your Desk" : desk.name}
+      showsHeader={desk != null}
       headerRight={headerRight}
-      
       contentContainerClassName="h-full overflow-y-auto"
       {...props}
     >
-        <DeskHeader notebooks={currentDesk.notebooks} />
+        <DeskHeader notebooks={notebooks} />
 
-        <Desk
-          onCreateNotebookClick={() => modals[NOTEBOOK_MODAL_TYPES.CREATE].open(currentDesk.id)}
-          onSearchChange={() =>{}}
-          onNotebookClick={onNotebookClick}
-        />
+        {query && filteredNotebooks.length === 0 ?  
+          <div className="centered">
+            <EmptyState 
+              title="No notebooks found" 
+              message="Your search didn't match any notebooks." 
+              buttonVariant="outline"
+              onAction={clearResults}
+              actionLabel="Clear search"
+            />
+          </div>
+          : 
+          <Desk
+            notebooks={query ? filteredNotebooks : notebooks}
+            onCreateNotebookClick={() => createNotebookModal.open(desk.id)}
+            onNotebookClick={onNotebookClick}
+          />}
         
-        {!currentDesk.isPublic && user.id !== currentDesk.creatorId && (
+        {!desk.isPublic && user.id !== desk.creatorId && (
           <Button
             onClick={() => {}}
             style={{ marginBottom: 30 }}

@@ -10,6 +10,7 @@ import { Dialog } from "@/components/ui";
 import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
 import { ErrorState } from "@/components/states";
+import { useAuth } from "@/features/auth/presentation/hooks";
 
 type UserContextType = {
   user: User;
@@ -19,17 +20,16 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 type UserProviderProps = {
   children: React.ReactNode;
-  user: User | null;
 };
 
 export function UserProvider({
   children,
-  user,
 }: UserProviderProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuth();
+
   const {data: profile, error, isLoading: isLoadingProfile, refetch} = useUserProfile(user?.id ?? null);
-  
   if (!user && !pathname.includes("auth")) {
     return (
       <div className="page-center">
@@ -65,36 +65,26 @@ export function UserProvider({
         variant="card"
         title="Error loading profile"
         message={error.message}
-        onAction={() => router.refresh()}
+        onAction={() => window.location.reload()}
         actionLabel="Refresh"
         onRetry={refetch}
        />
       </div>
     );
   }
-  if (profile === null) {
+  if (!profile) {
     return (
       <div className="page-center">
         <Dialog defaultOpen open>
           <CreateProfileModal
             userId={user.id}
-            onSuccess={() => {
-              router.refresh();
-              refetch();
-            }}
+            onSuccess={() => window.location.reload()}
           />
         </Dialog>
       </div>
     );
   }
 
-  if (profile === undefined) {
-    return (
-      <div className="page-center">
-        <Loader2 strokeWidth={2.5} size={40} className="animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <UserContext.Provider value={{ profile, user }}>

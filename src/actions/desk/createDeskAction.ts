@@ -16,13 +16,11 @@ export async function createDeskAction(input: CreateDeskInput): Promise<ActionRe
       const useCase = await makeCreateDeskUseCase();
       const result = await useCase.execute(input);
       if(!result.success){
-        return { success: false as const, error: result.error };
+        return { success: false as const, error: result.error.message };
       }
-      return { success: true as const, data: result.desk };
+      return result
 
-    } catch (error) {      
-      console.log("error", error);
-      
+    } catch (error) {            
       return { success: false as const, error: getUserErrorMessage(error) };
     }
 }
