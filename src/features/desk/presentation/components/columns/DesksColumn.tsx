@@ -8,7 +8,7 @@ import { useSearch } from "@/hooks";
 import { DeskListItem } from "../ui";
 import type { DeskForCard, SchoolDeskForDetail, MyDeskForDetail } from "@/features/desk/infrastructure/queries";
 import { useUserDesks } from "../../hooks/useUserDesks";
-import { useCreateMyDesk, useCreateSchoolDesk, useDesk } from "../../hooks";
+import { useCreateMyDesk, useCreateSchoolDesk } from "../../hooks";
 import { useModals } from "@/hooks/useModals";
 import { SearchBar } from "@/components/shared";
 import { useSchool } from "@/features/school/presentation/hooks";
