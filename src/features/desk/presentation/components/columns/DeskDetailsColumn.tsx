@@ -2,10 +2,9 @@ import { ProfileButton } from "@/components/shared";
 import { AvatarGroup, AvatarGroupCount } from "@/components/ui";
 import { useDesk } from "../../hooks/useDesk";
 import {  LoadingState } from "@/components/states";
-import { useState } from "react";
 import { DeskHeader } from "../ui";
 import { useNotebooksByDeskId } from "@/features/notebook/presentation/hooks";
-import { Tab, useDeskContext } from "@/app/providers/DeskProvider";
+import { useDeskContext } from "@/app/providers/DeskProvider";
 type DeskDetailsColumnProps = {
     deskId: string;
 }
@@ -14,7 +13,7 @@ export function DeskDetailsColumn({deskId}: DeskDetailsColumnProps) {
     const { data: desk, isLoading } = useDesk(deskId);
     const { data: notebooks = []} = useNotebooksByDeskId(deskId);
     const { currentTab, setCurrentTab } = useDeskContext();
-    function handleTabClick(tab: Tab) {
+    function handleTabClick(tab: "notebooks" | "chalkboards" | "members") {
         setCurrentTab(tab);
     }
     if(isLoading) return <LoadingState />;
