@@ -45,7 +45,7 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
   const handleMaterialClick = (material: NotebookMaterial) => {
     const notebook = notebooks.find(d => d.id === material.notebookId);
     if(!notebook) return;
-    router.push(`/home?${Q.rightMode}=${RIGHT_MODES.notebook}&${Q.desk}=${notebook.deskId}&${Q.notebook}=${material.notebookId}&${Q.materialIndex}=${notebook.materials.findIndex(m => m.id === material.id)}`);
+    router.push(`/?${Q.rightMode}=${RIGHT_MODES.notebook}&${Q.desk}=${notebook.deskId}&${Q.notebook}=${material.notebookId}&${Q.materialIndex}=${notebook.materials.findIndex(m => m.id === material.id)}`);
   };
   if (!profile) {
     return <EmptyState message="This User's profile does not exist." />

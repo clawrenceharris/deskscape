@@ -11,7 +11,7 @@ export function Header() {
   const router = useRouter();
   const handleProfileClick = () => {
     if(!profile) return;
-    router.push(`/home?r=pf&u=${profile.userId}`);
+    router.push(`/?r=pf&u=${profile.userId}`);
   };
   
 

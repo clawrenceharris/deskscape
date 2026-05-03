@@ -59,7 +59,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/auth')
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = '/home'
+    url.pathname = '/'
     url.search = ''
     return NextResponse.redirect(url)
   }

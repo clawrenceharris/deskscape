@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             throw new ApplicationError(result.error);
         }
         setUser(result.data);
-        router.replace("/home");
+        router.replace("/");
         router.refresh();
         setIsLoading(false);
     }, [router]);
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             throw new ApplicationError(result.error);
         }
         setUser(result.data);
-        router.replace("/home");
+        router.replace("/");
         router.refresh();
         setIsLoading(false);
     }, [router]);
