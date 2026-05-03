@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run",
+    "test:e2e": "playwright test",
     "lint": "eslint",
+    "preview": "next build && next start",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "gen:db": "node scripts/gen-db-types.cjs",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:generate": "sudo npx prisma generate"
@@ -44,18 +51,25 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.5",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "install": "^0.13.0",
+    "jsdom": "^29.0.2",
     "npm": "^11.12.1",
     "prisma": "^7.6.0",
     "shadcn": "^4.1.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }
