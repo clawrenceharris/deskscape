@@ -6,7 +6,6 @@ import { DeskSection, useDeskContext, useUser } from "@/app/providers";
 import type { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { useDesk } from "../../hooks/useDesk";
 import { DeskForCard, DeskForDetail } from "@/features/desk/infrastructure/queries";
-import { useModals } from "@/hooks/useModals";
 import { useJoinOrLeaveDesk } from "../../hooks/useJoinOrLeaveDesk";
 import { ChalkboardView, ComingSoonView, DeskHomeView, NotebooksView } from "../views";
 
@@ -70,6 +69,7 @@ export function DeskColumn ({
             {...props}
           />
       );
+     
       default:
         return (
           <DeskHomeView {...props} />
@@ -104,7 +104,7 @@ export function DeskColumn ({
       </Column>
     );
   }
-  if(desk.members.some(member => member.profile.userId === user.id) && desk.isPublic){
+  if(!desk.members.some(member => member.profile.userId === user.id) && desk.isPublic){
     return (
       <Column {...props}>
         <div className="h-full flex-1 flex items-center justify-center">
