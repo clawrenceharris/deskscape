@@ -5,7 +5,7 @@ import { CreateDeskForm } from "../CreateDeskForm";
 
 const mocks = vi.hoisted(() => ({
   createDeskAction: vi.fn(),
-  useUserSchools: vi.fn(),
+  useSchools: vi.fn(),
   useUserProfile: vi.fn(),
 }));
 
@@ -14,7 +14,7 @@ vi.mock("@/actions/desk", () => ({
 }));
 
 vi.mock("@/features/school/presentation/hooks", () => ({
-  useUserSchools: mocks.useUserSchools,
+  useSchools: mocks.useSchools,
 }));
 
 vi.mock("@/features/profile/presentation/hooks", () => ({
@@ -46,7 +46,7 @@ describe("CreateDeskForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.useUserProfile.mockReturnValue({ data: null });
-    mocks.useUserSchools.mockReturnValue({
+    mocks.useSchools.mockReturnValue({
       data: [{ id: "0f6a30a1-3193-4948-aeb4-95a803b9ee7a", name: "North High" }],
       isLoading: false,
     });

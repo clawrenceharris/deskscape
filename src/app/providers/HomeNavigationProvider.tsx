@@ -1,22 +1,17 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useDeskContext, useLayout, useUser } from "@/app/providers";
-import { useMediaQuery } from "@/hooks";
-import { useDesk, useUserDesks } from "@/features/desk/presentation/hooks";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useDeskContext, useLayout } from "@/app/providers";
 import type { DeskForCard } from "@/features/desk/infrastructure/queries";
 import type { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 
-export const Q = {
-  desk: "desk",
-  notebook: "notebook",
-  user: "u",
-  origin: "o",
-  rightMode: "r",
-  panel: "pn",
-  materialIndex: "m",
+export const APP_ROUTES = {
+  desks: "/desks",
+  desk: (deskId: string) => `/desks/${deskId}`,
+  notebook: (deskId: string, notebookId: string) => `/desks/${deskId}/notebooks/${notebookId}`,
+  deskMembers: (deskId: string) => `/desks/${deskId}/members`,
+  deskChalkboard: (deskId: string) => `/desks/${deskId}/chalkboard`,
 } as const;
 
 export const RIGHT_MODES = {
@@ -36,6 +31,12 @@ export const PANELS = {
 } as const;
 
 export type ProfileOrigin = keyof typeof PROFILE_ORIGINS;
+export enum DeskSection {
+  notebooks = "notebooks",
+  chalkboard = "chalkboard",
+  burningQuestions = "burning-questions",
+  studyRooms = "study-rooms",
+}
 
 type HomeNavigationContextType = {
   currentProfileUserId: string | null;
@@ -56,27 +57,45 @@ type HomeNavigationProviderProps = {
   children: React.ReactNode;
 };
 
+function getRouteState(pathname: string) {
+  const segments = pathname.split("/").filter(Boolean);
+  const [root, deskId, section, notebookId] = segments;
+
+  if (root !== "desks") {
+    return {
+      deskId: null,
+      notebookId: null,
+      section: DeskSection.notebooks,
+      hasRightPanel: false,
+    };
+  }
+
+    
+
+  return {
+    deskId: deskId ?? null,
+    notebookId: section === DeskSection.notebooks ? notebookId ?? null : null,
+    section: section === DeskSection.chalkboard     
+    ? DeskSection.chalkboard
+    : section === DeskSection.burningQuestions
+    ? DeskSection.burningQuestions
+    : section === DeskSection.studyRooms
+    ? DeskSection.studyRooms
+    : null,
+    hasRightPanel: section === DeskSection.notebooks && !!notebookId,
+  };
+}
+
 export function HomeNavigationProvider({ children }: HomeNavigationProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const hydratedRef = useRef(false);
-  const hydratingRef = useRef(true);
   const [currentProfileUserId, setCurrentProfileUserId] = useState<string | null>(null);
   const [profileOrigin, setProfileOrigin] = useState<ProfileOrigin>("direct");
   const [materialIndex, setMaterialIndex] = useState(0);
-  const isMobile = useMediaQuery("(max-width: 768px)", {
-    initializeWithValue: false,
-  });
-  const { user } = useUser();
-  const { currentDeskId, currentNotebookId, setCurrentDeskId, setCurrentNotebookId } = useDeskContext();
-  const { isLoading: desksLoading } = useUserDesks(user.id);
-  const { data: currentDesk = null } = useDesk(currentDeskId ?? null);
+  const { currentDeskId, currentNotebookId, setCurrentDeskId, setCurrentNotebookId, setCurrentSection } = useDeskContext();
   const {
     openColumn,
-    isColumnOpen,
     setRightMode,
-    rightMode,
     selectNotebookLayout,
     selectDeskLayout,
     closeRightLayout,
@@ -84,105 +103,26 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
   } = useLayout();
 
   useEffect(() => {
-    if (desksLoading) return;
+    const route = getRouteState(pathname);
+   
+    setCurrentDeskId(route.deskId);
+    setCurrentNotebookId(route.notebookId);
 
-    hydratingRef.current = true;
-
-    const deskParam = searchParams.get(Q.desk);
-    const notebookParam = searchParams.get(Q.notebook);
-    const userParam = searchParams.get(Q.user);
-    const originParam = searchParams.get(Q.origin);
-    const panelParam = searchParams.get(Q.panel);
-    const modeParam = searchParams.get(Q.rightMode);
-    const materialIndexParam = searchParams.get(Q.materialIndex);
-    const parsedMaterialIndex = Number.parseInt(materialIndexParam ?? "0", 10);
-
-    setCurrentDeskId(deskParam ?? null);
-    setCurrentNotebookId(notebookParam ?? null);
-    setMaterialIndex(Number.isFinite(parsedMaterialIndex) && parsedMaterialIndex >= 0 ? parsedMaterialIndex : 0);
-
-    if (modeParam === RIGHT_MODES.profile && userParam) {
-      setCurrentProfileUserId(userParam);
-      setProfileOrigin(originParam === PROFILE_ORIGINS.notebook ? "notebook" : "direct");
-      setRightMode("profile");
-    } else {
-      setCurrentProfileUserId(null);
-      setProfileOrigin("direct");
-      if (modeParam === RIGHT_MODES.notebook) {
-        setRightMode("notebook");
-      }
+    if(!route.section) {
+      return;
     }
+    setCurrentSection(route.section);
+   
 
-    if (panelParam === PANELS.left) {
-      openColumn("left");
-    } else if (panelParam === PANELS.center) {
-      openColumn("center");
-    } else if (panelParam === PANELS.right) {
-      openColumn("right");
-    } else if (modeParam === RIGHT_MODES.profile && userParam) {
-      openColumn("right");
-    } else if (notebookParam) {
+    if (route.notebookId) {
+      setRightMode("notebook");
       selectNotebookLayout();
-    } else if (deskParam) {
+    } else if (route.deskId) {
       selectDeskLayout();
     } else {
       openLeftLayout();
     }
-
-    hydratedRef.current = true;
-    hydratingRef.current = false;
-  }, [desksLoading, openColumn, openLeftLayout, searchParams, selectNotebookLayout, selectDeskLayout, setCurrentDeskId, setCurrentNotebookId, setRightMode]);
-
-  useEffect(() => {
-    if (!hydratedRef.current || hydratingRef.current) return;
-
-    const next = new URLSearchParams(searchParams.toString());
-
-    if (currentDeskId) next.set(Q.desk, currentDeskId);
-    else next.delete(Q.desk);
-
-    if (currentNotebookId) next.set(Q.notebook, currentNotebookId);
-    else next.delete(Q.notebook);
-
-    if (currentNotebookId) next.set(Q.materialIndex, String(materialIndex));
-    else next.delete(Q.materialIndex);
-
-    if (rightMode === "profile" && currentProfileUserId) {
-      next.set(Q.rightMode, RIGHT_MODES.profile);
-      next.set(Q.user, currentProfileUserId);
-      next.set(Q.origin, profileOrigin === "notebook" ? PROFILE_ORIGINS.notebook : PROFILE_ORIGINS.direct);
-    } else {
-      next.delete(Q.rightMode);
-      next.delete(Q.user);
-      next.delete(Q.origin);
-    }
-
-    if (isMobile) {
-      if (isColumnOpen("right")) next.set(Q.panel, PANELS.right);
-      else if (isColumnOpen("center")) next.set(Q.panel, PANELS.center);
-      else next.set(Q.panel, PANELS.left);
-    } else {
-      next.set(Q.panel, isColumnOpen("right") ? PANELS.right : PANELS.center);
-    }
-
-    const currentQuery = searchParams.toString();
-    const nextQuery = next.toString();
-    if (currentQuery !== nextQuery) {
-      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
-    }
-  }, [
-    currentDeskId,
-    currentNotebookId,
-    materialIndex,
-    isColumnOpen,
-    isMobile,
-    pathname,
-    rightMode,
-    currentProfileUserId,
-    profileOrigin,
-    router,
-    searchParams,
-  ]);
+  }, [openLeftLayout, pathname, selectDeskLayout, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId, setCurrentSection, setRightMode]);
 
   const handleNotebookClick = useCallback((item: NotebookForDetail | null) => {
     setCurrentProfileUserId(null);
@@ -191,31 +131,39 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
     if (!item) {
       setCurrentNotebookId(null);
       closeRightLayout();
+      router.push(currentDeskId ? APP_ROUTES.desk(currentDeskId) : APP_ROUTES.desks);
       return;
     }
     setCurrentDeskId(item.deskId);
     setCurrentNotebookId(item.id);
     selectNotebookLayout();
-  }, [closeRightLayout, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId]);
+    router.push(APP_ROUTES.notebook(item.deskId, item.id));
+  }, [closeRightLayout, currentDeskId, router, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId]);
 
   const handleDeskClick = useCallback((desk: DeskForCard) => {
     setCurrentProfileUserId(null);
     setProfileOrigin("direct");
     setMaterialIndex(0);
-    if (currentDesk?.id === desk.id) {
+    if (currentDeskId === desk.id) {
       setCurrentDeskId(null);
       setCurrentNotebookId(null);
       openLeftLayout();
+      router.push(APP_ROUTES.desks);
       return;
     }
     setCurrentDeskId(desk.id);
     setCurrentNotebookId(null);
     selectDeskLayout();
-  }, [currentDesk?.id, openLeftLayout, selectDeskLayout, setCurrentDeskId, setCurrentNotebookId]);
+    router.push(APP_ROUTES.desk(desk.id));
+  }, [currentDeskId, openLeftLayout, router, selectDeskLayout, setCurrentDeskId, setCurrentNotebookId]);
 
   const handleDesksOpen = useCallback(() => {
-    handleNotebookClick(null);
-  }, [handleNotebookClick]);
+    setCurrentDeskId(null);
+    setCurrentNotebookId(null);
+    setMaterialIndex(0);
+    openLeftLayout();
+    router.push(APP_ROUTES.desks);
+  }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId]);
 
   const handleProfileOpen = useCallback((userId: string, origin: ProfileOrigin) => {
     setCurrentProfileUserId(userId);
@@ -242,7 +190,8 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
     setCurrentNotebookId(null);
     setMaterialIndex(0);
     openLeftLayout();
-  }, [openLeftLayout, setCurrentDeskId, setCurrentNotebookId]);
+    router.push(APP_ROUTES.desks);
+  }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId]);
 
   return (
     <HomeNavigationContext.Provider

@@ -74,22 +74,7 @@ export function EmptyState({
     return (
       <>
        
-        {onSecondaryAction && secondaryActionLabel && (
-          <Button 
-            className="flex-1" 
-            onClick={onSecondaryAction} 
-            variant={secondaryButtonVariant} 
-            disabled={isLoadingSecondaryAction}
-          >
-            {isLoadingSecondaryAction ? <Loader2 className="w-4 h-4 animate-spin" /> : secondaryActionLabel}
-          </Button>
-        )}
-         {onAction && actionLabel && (
-            <Button  className="flex-1" variant={buttonVariant} onClick={onAction} disabled={isLoadingAction}>
-              { isLoadingAction ? (<Loader2 className="w-4 h-4 animate-spin" />)
-              : (<>{buttonIcon}{actionLabel}</>)}
-            </Button>
-        )}
+        
       </>
     );
   };
@@ -109,7 +94,22 @@ export function EmptyState({
         {message && <ItemDescription>{message}</ItemDescription>}
       </ItemContent>
       <ItemActions>
-        {renderActions()}
+      {onSecondaryAction && secondaryActionLabel && (
+          <Button 
+            className="flex-1" 
+            onClick={onSecondaryAction} 
+            variant={secondaryButtonVariant} 
+            disabled={isLoadingSecondaryAction}
+          >
+            {isLoadingSecondaryAction ? <Loader2 className="w-4 h-4 animate-spin" /> : secondaryActionLabel}
+          </Button>
+        )}
+         {onAction && actionLabel && (
+            <Button  className="flex-1" variant={buttonVariant} onClick={onAction} disabled={isLoadingAction}>
+              { isLoadingAction ? (<Loader2 className="w-4 h-4 animate-spin" />)
+              : (<>{buttonIcon}{actionLabel}</>)}
+            </Button>
+        )}
       </ItemActions>
     </Item>
   );
@@ -117,17 +117,21 @@ export function EmptyState({
   const renderCard = () => (
     <Card
       className={cn(
-        "shadow-sm border border-primary-foreground max-w-sm w-full bg-muted-background  flex flex-col justify-center text-center",
+      "p-3 bg-muted-background max-w-sm w-full rounded-3xl shadow-none flex flex-col justify-center text-center",
         className,
       )}
     >
+
+      
       <CardHeader>
         <Image
           width={510}
           height={510}
-          className="w-full max-w-[200px] mx-auto"
-          alt="Sad Notebook"
+          alt=""
+          aria-hidden="true"
+          className="w-full rounded-full p-8 max-w-[240px] mx-auto"
           loading="eager"
+     
           src={imageUrl ? imageUrl : "/images/error.png"}
         />
         <CardTitle className="text-2xl">{title}</CardTitle>
@@ -136,7 +140,26 @@ export function EmptyState({
         {message && <CardDescription>{message}</CardDescription>}
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
-        {renderActions()}
+      {onSecondaryAction && secondaryActionLabel && (
+        <CardAction> 
+          <Button 
+            className="flex-1" 
+            onClick={onSecondaryAction} 
+            variant={secondaryButtonVariant} 
+            disabled={isLoadingSecondaryAction}
+          >
+            {isLoadingSecondaryAction ? <Loader2 className="w-4 h-4 animate-spin" /> : secondaryActionLabel}
+          </Button>
+        </CardAction>
+      )}
+        <CardAction>
+         {onAction && actionLabel && (
+            <Button  className="flex-1" variant={buttonVariant} onClick={onAction} disabled={isLoadingAction}>
+                { isLoadingAction ? (<Loader2 className="w-4 h-4 animate-spin" />)
+                : (<>{buttonIcon}{actionLabel}</>)}
+              </Button>
+          )}
+        </CardAction>
       </CardFooter>
     </Card>
   );

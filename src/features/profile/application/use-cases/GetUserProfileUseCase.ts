@@ -1,6 +1,5 @@
 import { getUserErrorMessage } from "@/lib/utils/errors";
 import { ProfileRepository } from "../../domain/repositories";
-import { GetUserProfileResult } from "../dto";
 import { ApplicationResultWithData } from "@/shared/kernel";
 import { ProfileForDetail } from "../../infrastructure/queries";
 import { ApplicationError } from "@/lib/utils/errors";

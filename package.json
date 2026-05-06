@@ -16,7 +16,7 @@
     "test:coverage": "vitest run --coverage",
     "gen:db": "node scripts/gen-db-types.cjs",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:generate": "sudo npx prisma generate"
+    "prisma:generate": "npx prisma generate"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

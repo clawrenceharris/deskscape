@@ -2,6 +2,10 @@ import "@testing-library/jest-dom/vitest";
 import { createElement } from "react";
 import { vi } from "vitest";
 
+// Modules such as `createBrowserClient` read these at import time; real CI/local `.env` overrides these.
+process.env.NEXT_PUBLIC_SUPABASE_URL ??= "http://127.0.0.1:54321";
+process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??= "test-publishable-key";
+
 vi.mock("@hugeicons/react", () => ({
   HugeiconsIcon: () => createElement("svg", { "aria-hidden": true }),
 }));

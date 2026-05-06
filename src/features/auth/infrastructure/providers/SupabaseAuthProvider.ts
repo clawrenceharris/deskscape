@@ -55,7 +55,8 @@ export class SupabaseAuthProvider implements AuthProvider {
   }
 
   async signOut(): Promise<void> {
-    await this.client.auth.signOut();
+    const { error } = await this.client.auth.signOut();
+    if (error) throw error;
   }
 
   async requestPasswordReset(email: string): Promise<void> {

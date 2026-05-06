@@ -55,8 +55,10 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
  * Accepts callback refs and RefObject(s)
  */
 function useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
-  // biome-ignore lint/correctness/useExhaustiveDependencies: we want to memoize by all values
+  // Ref list length and identities vary per call site; literal deps are not expressible.
+  /* eslint-disable react-hooks/use-memo, react-hooks/exhaustive-deps -- dynamic ref list */
   return React.useCallback(composeRefs(...refs), refs);
+  /* eslint-enable react-hooks/use-memo, react-hooks/exhaustive-deps */
 }
 
 export { composeRefs, useComposedRefs };

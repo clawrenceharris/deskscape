@@ -22,7 +22,6 @@ import {
 } from "react-hook-form";
 import { useEffect, useMemo } from "react";
 import { useCreateProfileForm } from "../../hooks";
-import { User } from "@supabase/supabase-js";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { SearchSelect } from "@/components/shared";
 import { useSchools } from "@/features/school/presentation/hooks";

@@ -29,7 +29,7 @@ describe("auth validation", () => {
     expect(loginSchema.safeParse({ email: "bad", password: "short" }).error?.issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ message: "Please enter a valid email address" }),
-        expect.objectContaining({ message: "Password should be at least 8 characters" }),
+        expect.objectContaining({ message: "Password must be at least 8 characters long" }),
       ]),
     );
   });
@@ -50,7 +50,7 @@ describe("desk validation", () => {
   it("rejects missing names, invalid school ids, oversized images, and non-images", () => {
     expect(createDeskSchema.safeParse({ name: "", schoolId: "bad" }).error?.issues).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ message: "Please enter a name for the desk" }),
+        expect.objectContaining({ message: "Name is required" }),
         expect.objectContaining({ message: "Please select a school" }),
       ]),
     );

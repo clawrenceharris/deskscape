@@ -1,19 +1,18 @@
-"use server";
-import { LayoutProvider, DeskProvider,SchoolProvider } from "../providers";
+import { LayoutProvider, DeskProvider, SchoolProvider, HomeNavigationProvider } from "../providers";
+import { HomePageClient } from "./HomePageClient";
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-
-
+export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
         <LayoutProvider>
             <SchoolProvider>
                 <DeskProvider>
-                
-                        {children}
-                   
-            </DeskProvider>
-        </SchoolProvider>
-    </LayoutProvider>
-   
+                    <HomeNavigationProvider>
+                        
+                        <HomePageClient />
+                        <div hidden>{children}</div>
+                    </HomeNavigationProvider>
+                </DeskProvider>
+            </SchoolProvider>
+        </LayoutProvider>   
     );
 }

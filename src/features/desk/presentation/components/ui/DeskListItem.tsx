@@ -1,7 +1,7 @@
 "use client";
 import { MotionProps } from "motion/react";
 import { getShortDate } from "@/lib/utils/";
-import { Avatar, AvatarImage, AvatarFallback, AvatarGroup, Card, CardFooter, CardHeader, AvatarGroupCount } from "@/components/ui";
+import { AvatarGroup, Card, CardFooter, CardHeader, AvatarGroupCount } from "@/components/ui";
 import { DeskForCard } from "@/features/desk/infrastructure/queries";
 import { ProfileButton } from "@/components/shared";
 
@@ -20,7 +20,12 @@ export function DeskListItem ({
 
   return (
     <Card
-      
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if(e.key === "Enter" || e.key === " ") {
+          onClick?.(desk);
+        }
+      }}
       onClick={() => onClick?.(desk)}
       className={`
         relative
@@ -35,6 +40,8 @@ export function DeskListItem ({
         box-shadow 
         cursor-pointer 
         rounded-xl 
+        focus:outline-2 focus:outline-secondary/50
+        outline-offset-2
         ${selected ? "outline-2 outline-secondary" : ""}`}
     >
       <CardHeader
@@ -53,7 +60,7 @@ export function DeskListItem ({
           <p>{desk.name}</p>
           <AvatarGroup  className="flex items-center">
             {desk.members.slice(0, 3).map((member) => (
-              <ProfileButton disabled size="icon-sm" profile={member.profile} key={member.profile.userId}/>
+              <ProfileButton tabIndex={-1} disabled size="icon-sm" profile={member.profile} key={member.profile.userId}/>
             ))}
             {desk.members.length > 3 && <AvatarGroupCount className="text-foreground size-[20px] bg-secondary-foreground">+{desk.members.length - 3}</AvatarGroupCount>}
           </AvatarGroup>

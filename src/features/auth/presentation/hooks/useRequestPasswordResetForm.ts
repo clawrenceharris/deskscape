@@ -13,8 +13,8 @@ export const useRequestPasswordResetForm = () => {
         },
     });
     const requestPasswordReset = async (data: ForgotPasswordFormValues) => {
-        // const requestPasswordResetUseCase = makeRequestPasswordResetUseCase();
-        // await requestPasswordResetUseCase.execute(data.email);
+        // TODO: Implement request password reset
+        console.log(data);
     }
     return {form, requestPasswordReset};
 }

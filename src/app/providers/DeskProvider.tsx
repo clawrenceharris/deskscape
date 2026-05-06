@@ -1,13 +1,14 @@
 "use client";
 import { createContext, useContext, useState } from "react";
+import { DeskSection } from "./HomeNavigationProvider";
 
 type DeskContextType = {
   setCurrentDeskId: (deskId: string | null) => void;
   setCurrentNotebookId: (notebookId: string | null) => void;
   currentDeskId: string | null;
   currentNotebookId: string | null;
-  currentTab: "notebooks" | "chalkboards" | "members";
-  setCurrentTab: (tab: "notebooks" | "chalkboards" | "members") => void;
+  currentSection: DeskSection;
+  setCurrentSection: (section: DeskSection) => void;
 }
 
 type DeskProviderProps = {
@@ -19,14 +20,14 @@ const DeskContext = createContext<DeskContextType | undefined>(undefined);
 export function DeskProvider({ children }: DeskProviderProps) {
   const [currentDeskId, setCurrentDeskId] = useState<string | null>(null);
   const [currentNotebookId, setCurrentNotebookId] = useState<string | null>(null);
-  const [currentTab, setCurrentTab] = useState<"notebooks" | "chalkboards" | "members">("notebooks");
+  const [currentSection, setCurrentSection] = useState<DeskSection>(DeskSection.notebooks);
   return <DeskContext.Provider value={{ 
     setCurrentNotebookId,
     currentNotebookId,
     currentDeskId,
     setCurrentDeskId,
-    currentTab,
-    setCurrentTab,
+    currentSection,
+    setCurrentSection,
     }}>
       {children}
     </DeskContext.Provider>;

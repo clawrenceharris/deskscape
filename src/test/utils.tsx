@@ -30,7 +30,7 @@ export function renderWithQueryClient(
   options?: RenderOptions & { queryClient?: QueryClient },
 ) {
   const queryClient = options?.queryClient ?? createTestQueryClient();
-  const { queryClient: _queryClient, ...renderOptions } = options ?? {};
+  const { ...renderOptions } = options ?? {};
 
   return {
     queryClient,
@@ -46,7 +46,7 @@ export function renderHookWithQueryClient<Result, Props>(
   options?: RenderHookOptions<Props> & { queryClient?: QueryClient },
 ) {
   const queryClient = options?.queryClient ?? createTestQueryClient();
-  const { queryClient: _queryClient, ...hookOptions } = options ?? {};
+  const { ...hookOptions } = options ?? {};
 
   return {
     queryClient,

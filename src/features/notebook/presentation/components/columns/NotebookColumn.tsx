@@ -20,7 +20,6 @@ import { useDeleteNotebook, useNotebook, useMakeVote, useVotes } from "../../hoo
 import { AnimatedVoteCount } from "../ui";
 import { EmptyState, LoadingState } from "@/components/states";
 import { useDownloadNotebook } from "../../hooks";
-import { NOTEBOOK_MODAL_TYPES } from "../modals";
 import { useModals } from "@/hooks/useModals";
 
 interface NotebookColumnProps {

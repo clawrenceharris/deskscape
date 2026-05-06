@@ -23,15 +23,17 @@ export interface ColumnProps extends MotionProps {
   columnType: ColumnType;
   headerStyle?: React.CSSProperties;
   toggle?: React.ReactNode;
+  toggleIcon?: React.ReactNode;
   showsHeader?: boolean;
   children?: React.ReactNode;
   contentContainerClassName?: string;
 }
 export function Column ({
-  title,
+  title: titleProp,
   openWidth,
   closedWidth,
   toggle,
+  toggleIcon,
   style,
   className,
   headerRight,
@@ -48,7 +50,7 @@ export function Column ({
   const { openColumn, closeColumn, isColumnOpen } = useLayout();
   const columnRef = useRef<HTMLDivElement>(null);
   const isOpen = isColumnOpen(columnType);
-
+  const title = typeof titleProp === "string" ? titleProp.charAt(0).toUpperCase() + titleProp.slice(1) : titleProp;
   const handleCloseColumn = (e: React.MouseEvent<HTMLButtonElement>) => {
     onCollapse?.(e);
     if (!e.defaultPrevented) {
@@ -73,7 +75,7 @@ export function Column ({
         duration: 0.3,
         ease: "easeInOut",
       }} 
-      className={cn("flex w-full flex-col transition-all duration-300 overflow-hidden rounded-3xl flex-1 h-full shadow-md bg-surface relative", className)}
+      className={cn("flex w-full flex-col transition-all duration-300 overflow-hidden rounded-3xl flex-1 h-full bg-surface relative", className)}
       style={{
       
         minWidth: closedWidth,
@@ -94,12 +96,12 @@ export function Column ({
                     size="icon"
                     onClick={handleCloseColumn}
                   >
-                     <ChevronLeft strokeWidth={3}/>
+                     {toggleIcon ? toggleIcon :<ChevronLeft strokeWidth={3}/>}
                   </Button>
                 )}
                 {toggle && toggle}
                 {typeof title === "string" ? (
-                  <h2 title={title} className="heading">
+                  <h2 title={title}>
                     {title}
                   </h2>
                 ) : (

@@ -28,10 +28,10 @@ describe("auth use cases", () => {
       signInWithEmail: vi.fn().mockResolvedValue(user),
     });
 
-    const result = await new LoginUserUseCase(authProvider).execute({
-      email: "user@example.com",
-      password: "password",
-    });
+    const result = await new LoginUserUseCase(authProvider).execute(
+      "user@example.com",
+      "password",
+    );
 
     expect(authProvider.signInWithEmail).toHaveBeenCalledWith("user@example.com", "password");
     expect(result).toEqual({ success: true, data: user });
@@ -42,10 +42,10 @@ describe("auth use cases", () => {
       signInWithEmail: vi.fn().mockRejectedValue({ message: "Invalid login credentials" }),
     });
 
-    const result = await new LoginUserUseCase(authProvider).execute({
-      email: "user@example.com",
-      password: "password",
-    });
+    const result = await new LoginUserUseCase(authProvider).execute(
+      "user@example.com",
+      "password",
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -61,13 +61,10 @@ describe("auth use cases", () => {
     const useCase = new SignupUserUseCase(authProvider);
 
     await expect(
-      useCase.execute({ email: "user@example.com", password: "password" }),
+      useCase.execute("user@example.com", "password"),
     ).resolves.toEqual({ success: true, data: user });
 
-    const missingUserResult = await useCase.execute({
-      email: "user@example.com",
-      password: "password",
-    });
+    const missingUserResult = await useCase.execute("user@example.com", "password");
 
     expect(missingUserResult.success).toBe(false);
     if (!missingUserResult.success) {

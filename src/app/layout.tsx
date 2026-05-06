@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { Header } from "@/components/shared";
 import { AuthProvider, ModalProvider, QueryProvider, ThemeProvider, UserProvider } from "./providers";
 
 export const metadata: Metadata = {
@@ -45,12 +44,7 @@ export default async function RootLayout({
             <ModalProvider>
               <AuthProvider>
               <UserProvider>              
-                <div className="page">
-                  <Header/>
-                  <main>
-                    {children}
-                  </main> 
-                </div>
+                {children}
               </UserProvider>
               </AuthProvider>
             </ModalProvider>

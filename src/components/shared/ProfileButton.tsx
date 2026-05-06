@@ -20,11 +20,14 @@ export function ProfileButton({
   if (!profile) return null;
   console.log(profile);
   return (
+    <div className="flex items-center gap-2">
+
+    
       <Button
         {...props}
         variant="default"
         size="icon-lg"
-        className={cn("flex bg-primary-foreground rounded-full justify-center items-center gap-2", `shadow-md shadow-black/20 dark:shadow-black ${props.size === "icon-xs" ? "size-[25px]" : props.size === "icon-sm" ? "size-[35px]" : "size-[50px]"}`, disabled ? "pointer-events-none": "", className)} 
+        className={cn("flex bg-primary-foreground rounded-full justify-center items-center gap-2", `shadow-md shadow-black/20 ${props.size === "icon-xs" ? "size-[25px]" : props.size === "icon-sm" ? "size-[35px]" : "size-[50px]"}`, disabled ? "pointer-events-none": "", className)} 
       >
 
      <Avatar className="w-full h-full">
@@ -46,6 +49,8 @@ export function ProfileButton({
       </AvatarFallback>
      </Avatar>
 
+     
+      </Button>
       {showsName && (
         <p className="row ">
           {profile.userId === user.id
@@ -54,8 +59,7 @@ export function ProfileButton({
          
         </p>
       )}
-      </Button>
-    
+    </div>
   );
 };
 

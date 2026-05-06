@@ -22,6 +22,8 @@ interface SearchSelectProps extends Omit<React.ComponentProps<"input">, "value" 
   items: { value: string; label: string }[]
   value?: string | null
   onChange: (value: string) => void
+  /** When false, users can only pick existing items */
+  canCreateNew?: boolean
   /** Placeholder inside the search input */
   searchPlaceholder?: string
   /** Label for the “add custom” row (search text is appended) */
@@ -32,6 +34,7 @@ export function SearchSelect({
   items,
   value,
   onChange,
+  canCreateNew = true,
   placeholder = 'Select…',
   searchPlaceholder = 'Search…',
   newItemLabel = 'New',
@@ -58,7 +61,7 @@ export function SearchSelect({
   const hasExactMatch = items.some(
     (item) => item.label.toLowerCase() === searchTrim.toLowerCase()
   )
-  const showNewOption = searchTrim.length > 0 && !hasExactMatch
+  const showNewOption = canCreateNew && searchTrim.length > 0 && !hasExactMatch
 
   const displayLabel =
     value != null && value !== '' && !props.disabled

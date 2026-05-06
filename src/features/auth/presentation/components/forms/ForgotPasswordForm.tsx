@@ -17,7 +17,14 @@ import { useRequestPasswordResetForm } from '../../hooks/'
 export function ForgotPasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [success, setSuccess] = useState(false)
   const { form, requestPasswordReset } = useRequestPasswordResetForm();
- 
+  const handleRequestPasswordReset = async (data: ForgotPasswordFormValues) => {
+    try {
+      await requestPasswordReset(data);
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -45,7 +52,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
           <CardContent>
             <Form<ForgotPasswordFormValues> 
               form={form}
-              onSubmit={requestPasswordReset}
+              onSubmit={handleRequestPasswordReset}
               
               showsCancelButton={false}
             >

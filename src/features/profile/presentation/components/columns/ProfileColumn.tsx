@@ -12,7 +12,7 @@ import { PROFILE_MODAL_TYPES } from "../modals";
 import { useQueryClient } from "@tanstack/react-query";
 import { profileKeys } from "@/lib/queries";
 import { useRouter } from "next/navigation";
-import { Q, RIGHT_MODES } from "@/app/providers";
+import { APP_ROUTES } from "@/app/providers";
 
 type ProfileColumnProps = {
   userId: string;
@@ -45,7 +45,7 @@ export function ProfileColumn({ userId }: ProfileColumnProps) {
   const handleMaterialClick = (material: NotebookMaterial) => {
     const notebook = notebooks.find(d => d.id === material.notebookId);
     if(!notebook) return;
-    router.push(`/?${Q.rightMode}=${RIGHT_MODES.notebook}&${Q.desk}=${notebook.deskId}&${Q.notebook}=${material.notebookId}&${Q.materialIndex}=${notebook.materials.findIndex(m => m.id === material.id)}`);
+    router.push(APP_ROUTES.notebook(notebook.deskId, material.notebookId));
   };
   if (!profile) {
     return <EmptyState message="This User's profile does not exist." />

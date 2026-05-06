@@ -35,6 +35,7 @@ export function LoginForm() {
           placeholder="Email"
           label="Email"
           required
+          autoComplete="current-email"
         />
 
         {/* Password */}
@@ -46,6 +47,8 @@ export function LoginForm() {
             label="Password" 
             name="password" 
             required
+            autoComplete="current-password"
+            
           />
           <div className="flex justify-end">
             <Link

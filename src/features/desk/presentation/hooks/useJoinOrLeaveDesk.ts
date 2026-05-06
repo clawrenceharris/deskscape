@@ -33,14 +33,20 @@ export function useJoinOrLeaveDesk() {
     });
     const joinDesk = useCallback(async (input: { role: "CONTRIBUTOR" | "OWNER" | "VIEWER"}  & JoinOrLeaveDeskInput) => {
         setIsJoining(true);
-        await joinOrLeaveDeskMutation.mutateAsync({...input, isJoining: true});
-        setIsJoining(false);
+        try {
+            await joinOrLeaveDeskMutation.mutateAsync({...input, isJoining: true});
+        } finally {
+            setIsJoining(false);
+        }
     }, [joinOrLeaveDeskMutation]);
 
     const leaveDesk = useCallback(async (input: JoinOrLeaveDeskInput) => {
         setIsLeaving(true);
-        await joinOrLeaveDeskMutation.mutateAsync(input);
-        setIsLeaving(false);
+        try {
+            await joinOrLeaveDeskMutation.mutateAsync(input);
+        } finally {
+            setIsLeaving(false);
+        }
     }, [joinOrLeaveDeskMutation]);
     return { joinDesk, leaveDesk, isJoining, isLeaving };
 }

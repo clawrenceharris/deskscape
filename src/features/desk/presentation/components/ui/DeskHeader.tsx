@@ -31,7 +31,7 @@ export function DeskHeader({notebooks}: DeskHeaderProps) {
               alignItems: "center",
             }}
           >
-            <h3>{notebooks.length || 0}</h3>
+            <h3 data-testid="uploads-count">{notebooks.length || 0}</h3>
 
             <p className="text-muted-foreground">Uploads</p>
           </div>
@@ -43,7 +43,7 @@ export function DeskHeader({notebooks}: DeskHeaderProps) {
               alignItems: "center",
             }}
           >
-            <h3>{downloadCount}</h3>
+            <h3 data-testid="downloads-count">{downloadCount}</h3>
             <p className="text-muted-foreground">Downloads</p>
           </div>
           <div
@@ -55,7 +55,7 @@ export function DeskHeader({notebooks}: DeskHeaderProps) {
               alignItems: "center",
             }}
           >
-            <h3>{voteCount}</h3>
+            <h3 data-testid="votes-count">{voteCount}</h3>
 
             <p className="text-muted-foreground">Votes</p>
           </div>

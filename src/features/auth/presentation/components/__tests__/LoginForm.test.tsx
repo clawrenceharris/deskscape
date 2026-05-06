@@ -50,7 +50,7 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /log in/i }));
 
     expect(await screen.findByText("Please enter a valid email address")).toBeInTheDocument();
-    expect(screen.getByText("Password should be at least 8 characters")).toBeInTheDocument();
+    expect(screen.getByText("Password must be at least 8 characters long")).toBeInTheDocument();
     expect(mockLogin).not.toHaveBeenCalled();
   });
 });

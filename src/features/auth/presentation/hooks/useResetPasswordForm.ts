@@ -10,7 +10,11 @@ export const useResetPasswordForm = () => {
         defaultValues: {
             newPassword: "",
         },
-    }); const resetPassword = async (data: ResetPasswordFormValues) => {
+    }); 
+
+    const resetPassword = async (data: ResetPasswordFormValues) => {
+        // TODO: Implement reset password
+        console.log(data);
     }
     return {form, resetPassword};
 }

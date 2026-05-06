@@ -41,7 +41,7 @@ model Desk {
   isPublic    Boolean     @default(false)
   school      School?      @relation(fields: [schoolId], references: [id])
   creator     Profile     @relation("DeskCreator", fields: [creatorId], references: [userId], onDelete: SetDefault)
-  members     Member[] // profiles that are members of this desk
+  members     Member[]   // profiles that are members of this desk
   notebooks   Notebook[] // notebooks in this desk
   schoolDesk  SchoolDesk?
   userDesks   UserDesk[]

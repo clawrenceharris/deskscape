@@ -37,10 +37,7 @@ describe("auth actions", () => {
       password: "password",
     });
 
-    expect(execute).toHaveBeenCalledWith({
-      email: "user@example.com",
-      password: "password",
-    });
+    expect(execute).toHaveBeenCalledWith("user@example.com", "password");
     expect(result).toEqual({ success: true, data: user });
   });
 
@@ -83,10 +80,7 @@ describe("auth actions", () => {
       password: "password",
     });
 
-    expect(execute).toHaveBeenCalledWith({
-      email: "user@example.com",
-      password: "password",
-    });
+    expect(execute).toHaveBeenCalledWith("user@example.com", "password");
     expect(result).toEqual({ success: true, data: user });
   });
 

@@ -4,13 +4,7 @@ import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 
 import { cn } from "@/lib/utils"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+
 import {
   InputGroup,
   InputGroupAddon,
@@ -34,46 +28,16 @@ function Command({
   )
 }
 
-function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
-  children,
-  className,
-  showCloseButton = false,
-  ...props
-}: React.ComponentProps<typeof Dialog> & {
-  title?: string
-  description?: string
-  className?: string
-  showCloseButton?: boolean
-}) {
-  return (
-    <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      <DialogContent
-        className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-4xl! p-0",
-          className
-        )}
-        showCloseButton={showCloseButton}
-      >
-        {children}
-      </DialogContent>
-    </Dialog>
-  )
-}
 
-function CommandInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+const CommandInput = React.forwardRef<
+  React.ComponentRef<typeof CommandPrimitive.Input>,
+  React.ComponentProps<typeof CommandPrimitive.Input>
+>(({ className, ...props }, ref) => {
   return (
     <div data-slot="command-input-wrapper" className="p-1 pb-0">
       <InputGroup className="h-9 bg-input/20">
         <CommandPrimitive.Input
+          ref={ref}
           data-slot="command-input"
           className={cn(
             "w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
@@ -87,7 +51,8 @@ function CommandInput({
       </InputGroup>
     </div>
   )
-}
+})
+CommandInput.displayName = "CommandInput"
 
 function CommandList({
   className,
@@ -185,7 +150,6 @@ function CommandShortcut({
 
 export {
   Command,
-  CommandDialog,
   CommandInput,
   CommandList,
   CommandEmpty,

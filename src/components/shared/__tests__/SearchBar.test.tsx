@@ -20,7 +20,7 @@ describe("SearchBar", () => {
     );
 
     const input = screen.getByRole("searchbox");
-    expect(input).toHaveAttribute("placeholder", "");
+    expect(input).toHaveAttribute("placeholder", "Search desks");
 
     await user.click(input);
 
@@ -41,7 +41,7 @@ describe("SearchBar", () => {
     await user.click(screen.getByRole("button", { name: /clear search/i }));
 
     expect(onExpandedChange).toHaveBeenLastCalledWith(false);
-    expect(input).toHaveAttribute("placeholder", "");
+    expect(input).toHaveAttribute("placeholder", "Search desks");
   });
 
   it("supports controlled value and escape collapse", async () => {

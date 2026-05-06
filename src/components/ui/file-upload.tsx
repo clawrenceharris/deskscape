@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/role-supports-aria-props */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
@@ -390,6 +392,7 @@ function FileUpload(props: FileUploadProps) {
     return {
       getState: () => state,
       dispatch: (action) => {
+        /* eslint-disable-next-line react-hooks/immutability -- store slot updated synchronously before listener flush */
         state = reducer(state, action);
         for (const listener of listeners) {
           listener();
@@ -789,6 +792,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
         dataTransfer.items.add(file);
       }
 
+      /* eslint-disable-next-line react-hooks/immutability -- DOM FileList assignment to trigger native change */
       inputElement.files = dataTransfer.files;
       inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
@@ -828,6 +832,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
         dataTransfer.items.add(file);
       }
 
+      /* eslint-disable-next-line react-hooks/immutability -- DOM FileList assignment to trigger native change */
       inputElement.files = dataTransfer.files;
       inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
@@ -866,7 +871,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       tabIndex={context.disabled ? undefined : 0}
       {...dropzoneProps}
       className={cn(
-        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-secondary/30 focus-visible:border-ring/50 data-disabled:pointer-events-none data-dragging:border-secondary data-invalid:border-destructive data-dragging:bg-secondary/50 group relative flex  hover:shadow-lg shadow-secondary/50 data-invalid:ring-destructive/20",
+        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-secondary/30 focus-visible:border-ring/50 data-disabled:pointer-events-none data-dragging:border-secondary data-invalid:border-destructive data-dragging:bg-secondary/50 group  hover:shadow-lg shadow-secondary/50 data-invalid:ring-destructive/20",
         className,
       )}
       onClick={onClick}

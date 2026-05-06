@@ -2,18 +2,19 @@
 import { Column, type ColumnProps } from "./Column";
 import { useDeskContext, useSchoolContext, useUser } from "@/app/providers";
 import { Button, Card, CardDescription, CardTitle } from "@/components/ui";
-import { Loader2, Plus, Search } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states";
 import { useSearch } from "@/hooks";
 import { DeskListItem } from "../ui";
 import type { DeskForCard, SchoolDeskForDetail, MyDeskForDetail } from "@/features/desk/infrastructure/queries";
 import { useUserDesks } from "../../hooks/useUserDesks";
-import { useCreateMyDesk, useCreateSchoolDesk } from "../../hooks";
+import { useCreateMyDesk, useCreateSchoolDesk, useDesk } from "../../hooks";
 import { useModals } from "@/hooks/useModals";
 import { SearchBar } from "@/components/shared";
 import { useSchool } from "@/features/school/presentation/hooks";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
-import { toast } from "sonner";
+import { DeskDashboardColumn } from "./DeskDashboardColumn";
+import { motion } from "motion/react";
 
 interface DesksColumnProps extends ColumnProps {
   onDeskClick: (desk: DeskForCard) => void;
@@ -30,10 +31,12 @@ export function DesksColumn ({
     data: desks,
     filter: (desk, q) => desk.name.toLowerCase().includes(q.toLowerCase()),
   });
+  const { data: currentDesk } = useDesk(currentDeskId);
   const { data: profile } = useUserProfile(user.id);
   const { modals: { "desk:create": createDeskModal }} = useModals();
   const { currentSchoolId } = useSchoolContext();
   const { data: school, isLoading: isSchoolLoading } = useSchool(currentSchoolId);
+  const isMyDesk = currentDeskId === profile?.myDesk?.desk.id;
   const headerRight = (
     <div className="flex items-center gap-2">
       <SearchBar
@@ -83,8 +86,22 @@ export function DesksColumn ({
   }
   
   return (
-    <Column headerRight={headerRight} title={"Desks"} {...props}>
+    <Column 
+      title={currentDeskId ? isMyDesk ? "Your Desk" : currentDesk?.name: "Desks"} 
+      headerRight={headerRight}
+      {...props}
+    >
        
+       
+       <motion.div
+          className="absolute top-20 inset-x-0 flex min-h-0 flex-col overflow-hidden"
+          initial={false}
+          animate={{ x: !currentDeskId ? "0%" : "-100%" }}
+          transition={{
+            duration: 0.35,
+            ease: [0.32, 0.72, 0, 1] as const,
+          }}
+        >
        
       {query && filteredDesks.length === 0 ? ( 
         <div className="centered">
@@ -119,17 +136,23 @@ export function DesksColumn ({
           ))}
         </div>
       )}
-      {/* TODO: Add discover desks feature */}
-      {/* <Button
-        variant="outline"
-        className="absolute border-primary hover:border-primary/80 bg-primary/10 hover:bg-primary/20 text-primary bottom-4 flex left-1/2 -translate-x-1/2 w-full max-w-[200px] mx-auto"
-        onClick={() => {
-          toast.info("Coming soon!");
-        }}
-      >
-        <Search strokeWidth={2.5}/>
-        Discover Desks
-      </Button> */}
+    </motion.div>
+     
+      
+     <motion.div
+          className=" inset-0 flex min-h-0 h-full flex-col overflow-hidden"
+          initial={false}
+          animate={{ x: currentDeskId ? "0%" : "100%" }}
+          transition={{
+            duration: 0.35,
+            ease: [0.32, 0.72, 0, 1] as const,
+          }}
+        >
+      <DeskDashboardColumn
+      deskId={currentDeskId}
+    />
+    </motion.div>
+
     </Column>
   );
 }
@@ -183,6 +206,7 @@ function PlaceholderDesks(){
     createMyDesk(user.id);
     refetchProfile();
   }
+  
   return (
 
     <>

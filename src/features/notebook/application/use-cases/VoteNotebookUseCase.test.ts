@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getCurrentUser } from "@/features/auth/server";
+import { createMockUser } from "@/test/utils";
 import type { NotebookRepository } from "../../domain/repositories";
 import { VoteNotebookUseCase } from "./VoteNotebookUseCase";
 
@@ -29,7 +30,7 @@ describe("VoteNotebookUseCase", () => {
   });
 
   it("creates or updates a vote for the current user", async () => {
-    vi.mocked(getCurrentUser).mockResolvedValue({ id: "user-1" });
+    vi.mocked(getCurrentUser).mockResolvedValue(createMockUser({ id: "user-1" }));
     const repository = makeRepository({
       vote: vi.fn().mockResolvedValue(undefined),
     });
@@ -47,7 +48,7 @@ describe("VoteNotebookUseCase", () => {
   });
 
   it("removes a vote when the input is null", async () => {
-    vi.mocked(getCurrentUser).mockResolvedValue({ id: "user-1" });
+    vi.mocked(getCurrentUser).mockResolvedValue(createMockUser({ id: "user-1" }));
     const repository = makeRepository({
       removeVote: vi.fn().mockResolvedValue(undefined),
     });

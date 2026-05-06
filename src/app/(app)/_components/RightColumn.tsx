@@ -1,5 +1,5 @@
 "use client";
-import { useDeskContext, useLayout } from "@/app/providers";
+import { ProfileOrigin, useDeskContext, useLayout } from "@/app/providers";
 import { Column, type ColumnProps } from "@/features/desk/presentation/components/columns";
 import { ProfileColumn } from "@/features/profile/presentation/components/columns";
 import { NotebookColumn } from "@/features/notebook/presentation/components/columns";
@@ -10,7 +10,6 @@ import { EmptyState, LoadingState } from "@/components/states";
 import { useNotebook } from "@/features/notebook/presentation/hooks";
 import { useUserProfile } from "@/features/profile/presentation/hooks";
 import { useMemo } from "react";
-import { ProfileOrigin } from "../_providers/HomeNavigationProvider";
 
 const panelTransition = {
   type: "tween" as const,

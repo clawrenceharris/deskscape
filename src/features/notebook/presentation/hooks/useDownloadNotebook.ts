@@ -17,24 +17,68 @@ export const useDownloadNotebook =  () => {
             }
         },
         onMutate: (variables) => {
-            queryClient.setQueryData(notebookKeys.detail(variables.notebookId), (old: NotebookForDetail) => {
-                return {
-                    ...old,
-                    downloads: [...old.downloads, variables.notebookId],
-                };
-            });
+            const optimisticDownload = {
+                profile: { userId: variables.userId },
+            } as NotebookForDetail["downloads"][number];
+
+            queryClient.setQueryData(
+                notebookKeys.detail(variables.notebookId),
+                (old: NotebookForDetail | undefined) => {
+                    if (!old) return old;
+                    return {
+                        ...old,
+                        downloads: [...old.downloads, optimisticDownload],
+                    };
+                },
+            );
+            queryClient.setQueryData(
+                notebookKeys.listByDeskId(variables.deskId),
+                (old: NotebookForDetail[] | undefined) => {
+                    if (!old) return old;
+                    return old.map((nb) =>
+                        nb.id === variables.notebookId
+                            ? {
+                                  ...nb,
+                                  downloads: [...nb.downloads, optimisticDownload],
+                              }
+                            : nb,
+                    );
+                },
+            );
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: notebookKeys.detail(variables.notebookId) });
             queryClient.invalidateQueries({ queryKey: deskKeys.detail(variables.deskId) });
         },
         onError: (_error, variables) => {
-            queryClient.setQueryData(notebookKeys.detail(variables.notebookId), (old: NotebookForDetail) => {
-                return {
-                    ...old,
-                    downloads: old.downloads.filter((download) => download.profile.userId !== variables.userId),
-                };
-            });
+            queryClient.setQueryData(
+                notebookKeys.detail(variables.notebookId),
+                (old: NotebookForDetail | undefined) => {
+                    if (!old) return old;
+                    return {
+                        ...old,
+                        downloads: old.downloads.filter(
+                            (download) => download.profile.userId !== variables.userId,
+                        ),
+                    };
+                },
+            );
+            queryClient.setQueryData(
+                notebookKeys.listByDeskId(variables.deskId),
+                (old: NotebookForDetail[] | undefined) => {
+                    if (!old) return old;
+                    return old.map((nb) =>
+                        nb.id === variables.notebookId
+                            ? {
+                                  ...nb,
+                                  downloads: nb.downloads.filter(
+                                      (d) => d.profile.userId !== variables.userId,
+                                  ),
+                              }
+                            : nb,
+                    );
+                },
+            );
             queryClient.invalidateQueries({ queryKey: notebookKeys.detail(variables.notebookId) });
             queryClient.invalidateQueries({ queryKey: deskKeys.detail(variables.deskId) });
         },
