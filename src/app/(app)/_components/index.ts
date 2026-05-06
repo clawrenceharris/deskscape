@@ -1,1 +1,1 @@
-export * from "./RightColumn";
+export * from "./NotebookColumn";

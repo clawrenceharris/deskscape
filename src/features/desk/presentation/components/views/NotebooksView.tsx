@@ -1,6 +1,6 @@
 "use client";
 import { useDeskContext, useUser } from "@/app/providers";
-import { EmptyState } from "@/components/states";
+import { EmptyState, LoadingState } from "@/components/states";
 import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { Plus } from "lucide-react";
 import { NotebookGridItem } from "../ui";
@@ -31,7 +31,7 @@ export function NotebooksView({
   ): boolean {
     return notebook.title.toLowerCase().includes(search.toLowerCase());
   } 
-  const { data: notebooks = [] } = useNotebooksByDeskId(desk.id);
+  const { data: notebooks = [], isLoading: isLoadingNotebooks } = useNotebooksByDeskId(desk.id);
   const {
     query,
     clearResults,
@@ -59,8 +59,19 @@ export function NotebooksView({
        </Button>
      </div>
   );
-
-
+  if(isLoadingNotebooks) {
+    return (
+      <Column 
+        title="Notebooks" 
+        headerRight={headerRight}
+        {...props}
+      >
+        <div className="centered">
+          <LoadingState />
+        </div>
+      </Column>
+    );
+  }
   if (!desk.isPublic && desk.creatorId !== user.id) {
     return (
       <EmptyState

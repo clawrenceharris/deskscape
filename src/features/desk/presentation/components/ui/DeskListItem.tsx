@@ -47,7 +47,7 @@ export function DeskListItem ({
       <CardHeader
         style={{
           backgroundSize: "cover",
-          backgroundImage: "url(https://i.ibb.co/JcYbrj5/school-background2.png)",
+          backgroundImage: "url(https://i.ibb.co/N6q6BGpt/desk.png)",
         }}
         className="flex h-30 relative"
       >

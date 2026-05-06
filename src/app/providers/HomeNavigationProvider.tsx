@@ -199,8 +199,9 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
     setCurrentNotebookId(null);
     setMaterialIndex(0);
     openLeftLayout();
+    setCurrentSection(null);
     router.push(APP_ROUTES.desks);
-  }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId]);
+  }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId, setCurrentSection]);
 
   const handleNotebookExit = useCallback(() => {
     if(!currentDeskId) {

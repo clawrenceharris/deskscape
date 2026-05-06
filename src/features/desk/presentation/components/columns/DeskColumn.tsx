@@ -24,7 +24,6 @@ export function DeskColumn ({
 }: DeskColumnProps) {
   const {data: desk, isLoading} = useDesk(deskId);
   const { user } = useUser();
-  const { modals: { "desk:create": createDeskModal }} = useModals();
   const { currentSection } = useDeskContext();
   const { joinDesk, leaveDesk, isJoining, isLeaving } = useJoinOrLeaveDesk();
 
@@ -100,14 +99,12 @@ export function DeskColumn ({
             buttonVariant="tertiary"
            
             buttonIcon={<Plus strokeWidth={3}/>}
-            onAction={createDeskModal.open}
-            actionLabel="Create a new desk"
           />
         </div>
       </Column>
     );
   }
-  if(!desk.members.some(member => member.profile.userId === user.id) && desk.isPublic){
+  if(desk.members.some(member => member.profile.userId === user.id) && desk.isPublic){
     return (
       <Column {...props}>
         <div className="h-full flex-1 flex items-center justify-center">

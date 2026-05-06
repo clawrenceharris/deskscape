@@ -16,28 +16,27 @@ import { FilePreviewer, ProfileButton } from "@/components/shared";
 import { useDownload } from "@/hooks";
 import { toast } from "sonner";
 import { getUserErrorMessage } from "@/lib/utils/errors";
-import { useDeleteNotebook, useNotebook, useMakeVote, useVotes } from "../../hooks";
+import { useDeleteNotebook, useMakeVote, useVotes } from "../../hooks";
 import { AnimatedVoteCount } from "../ui";
-import { EmptyState, LoadingState } from "@/components/states";
 import { useDownloadNotebook } from "../../hooks";
 import { useModals } from "@/hooks/useModals";
+import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 
 interface NotebookColumnProps {
   onProfileClick: (profileId: string) => void;
-  notebookId: string | null;
+  notebook: NotebookForDetail;
   materialIndex: number;
   onMaterialIndexChange: (index: number) => void;
 }
 
 export function NotebookView({
   onProfileClick,
-  notebookId,
+  notebook,
   materialIndex,
   onMaterialIndexChange,
 }: NotebookColumnProps) {
   const { user } = useUser();
   const { modals: { "notebook:update": updateNotebookModal }} = useModals();
-  const {data: notebook = null, isLoading: notebookLoading} = useNotebook(notebookId);
   const { makeVote, removeVote} = useMakeVote();
   const { setCurrentNotebookId } = useDeskContext();
   const {closeRightLayout} = useLayout();
@@ -105,23 +104,6 @@ export function NotebookView({
     }, 0) ?? 0;
   }, [votes]);
 
-
-
-  if (notebookLoading) {
-    return (
-      <div className="flex flex-col flex-1">
-        <LoadingState />
-      </div>
-    );
-  }
-  if (!notebook) {
-    return (
-      <div className="flex flex-col flex-1">
-        <EmptyState variant="page" title="Not Found" message="This Notebook does not exist or has been deleted." />
-      </div>
-    );
-  }
- 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto">
       <div className="column-header sticky pl-8">
@@ -229,7 +211,7 @@ export function NotebookView({
         </div>
          
         {notebook.description && 
-        <div className="bg-secondary-foreground p-4 rounded-lg border mt-6 line-clamp-4">
+        <div className="bg-muted-background p-4 rounded-lg border mt-6 line-clamp-4">
           <p className="text-sm text-muted-foreground">{notebook.description}</p>
         </div>}
       </div>

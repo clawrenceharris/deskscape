@@ -17,10 +17,11 @@ type DeskSectionCardProps = {
   onClick?: (section: DeskSection) => void;
   supplies?: DeskSectionSupply[];
   label: string;
+  disabled?: boolean;
 }
 
 
-export function DeskSectionCard({ section, label, onClick, supplies =[] }: DeskSectionCardProps) {
+export function DeskSectionCard({ section, label, onClick, supplies =[], disabled = false }: DeskSectionCardProps) {
   
   return (
     <motion.div
@@ -29,9 +30,11 @@ export function DeskSectionCard({ section, label, onClick, supplies =[] }: DeskS
       animate="rest"
       whileHover="hover"
       onClick={() => onClick?.(section)}
+      aria-disabled={disabled}
     >
       <Card 
         className={cn(`
+          
           flex
           items-start
           justify-start
@@ -47,6 +50,7 @@ export function DeskSectionCard({ section, label, onClick, supplies =[] }: DeskS
           rounded-lg
           hover:bg-white
           `,
+          disabled && "pointer-events-none",
           {
             "text-secondary": section === DeskSection.notebooks,
             "text-primary": section === DeskSection.chalkboard,

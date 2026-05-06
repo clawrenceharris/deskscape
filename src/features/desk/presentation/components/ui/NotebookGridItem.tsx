@@ -20,10 +20,8 @@ export function NotebookGridItem({
   return (
     <Card
     onClick={onClick}
-    style={{
-      border: selected ? "1.4px solid var(--primary)" : "none",
-    }}
-    className={cn("flex bg-primary-foreground h-[300px] flex-col position-relative p-0 w-full max-w-[300px] md:max-w-[370px] mx-auto transition-all duration-200 whitespace-nowrap box-shadow cursor-pointer rounded-xl", className)}
+   
+    className={cn("flex bg-primary-foreground h-[300px] flex-col position-relative p-0 w-full max-w-[300px] md:max-w-[370px] mx-auto transition-all duration-200 whitespace-nowrap box-shadow cursor-pointer rounded-xl", selected && "outline-2 outline-secondary/50", className)}
   >
     <CardHeader className="flex h-[250px] relative text-white">
       <FilePreviewer 

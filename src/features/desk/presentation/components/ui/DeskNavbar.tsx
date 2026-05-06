@@ -64,11 +64,13 @@ export function DeskNavbar() {
           <DeskSectionCard
             label="Burning Questions"
             section={DeskSection.burningQuestions}
+            disabled={true}
             supplies={burningQuestionsSupplies}
             onClick={handleSectionClick}
           />
           <DeskSectionCard
             label="Study Rooms"
+            disabled={true}
             section={DeskSection.studyRooms}
             supplies={studyRoomsSupplies}
             onClick={handleSectionClick}
