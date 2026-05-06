@@ -26,16 +26,16 @@ export function DesksColumn ({
 }: DesksColumnProps) {
   const { user } = useUser();
   const { currentDeskId } = useDeskContext();
-  const { data: desks = [], isLoading, error } = useUserDesks(user.id);
+  const { data: desks = [], isLoading: isLoadingDesks, error } = useUserDesks(user.id);
   const { query, search: searchDesks, clearResults, results: filteredDesks, isLoading: isFilteredDesksLoading } = useSearch({
     data: desks,
     filter: (desk, q) => desk.name.toLowerCase().includes(q.toLowerCase()),
   });
-  const { data: currentDesk } = useDesk(currentDeskId);
+  const { data: currentDesk, isLoading: isLoadingCurrentDesk } = useDesk(currentDeskId);
   const { data: profile } = useUserProfile(user.id);
   const { modals: { "desk:create": createDeskModal }} = useModals();
   const { currentSchoolId } = useSchoolContext();
-  const { data: school, isLoading: isSchoolLoading } = useSchool(currentSchoolId);
+  const { data: school, isLoading: isLoadingSchool } = useSchool(currentSchoolId);
   const isMyDesk = currentDeskId === profile?.myDesk?.desk.id;
   const headerRight = (
     <div className="flex items-center gap-2">
@@ -58,7 +58,7 @@ export function DesksColumn ({
   if(query && isFilteredDesksLoading) {
     return (
       <Column {...props}>
-        <div className="h-full flex-1 flex items-center justify-center">
+        <div className="centered">
           <LoadingState />
         </div>
       </Column>
@@ -66,10 +66,10 @@ export function DesksColumn ({
   }
  
  
-  if (isLoading || isSchoolLoading) {
+  if (isLoadingDesks || isLoadingSchool || isLoadingCurrentDesk) {
     return (
       <Column {...props}>
-        <div className="h-full flex-1 flex items-center justify-center">
+        <div className="centered">
           <LoadingState />
         </div>
       </Column>
@@ -88,7 +88,7 @@ export function DesksColumn ({
   return (
     <Column 
       title={currentDeskId ? isMyDesk ? "Your Desk" : currentDesk?.name: "Desks"} 
-      headerRight={headerRight}
+      headerRight={currentDeskId ? null : headerRight}
       {...props}
     >
        

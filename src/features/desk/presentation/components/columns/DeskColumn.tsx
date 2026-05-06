@@ -8,11 +8,11 @@ import { useDesk } from "../../hooks/useDesk";
 import { DeskForCard, DeskForDetail } from "@/features/desk/infrastructure/queries";
 import { useModals } from "@/hooks/useModals";
 import { useJoinOrLeaveDesk } from "../../hooks/useJoinOrLeaveDesk";
-import { ChalkboardView, ComingSoonView, NotebooksView } from "../views";
+import { ChalkboardView, ComingSoonView, DeskHomeView, NotebooksView } from "../views";
 
 interface DeskColumnProps extends ColumnProps {
   deskId: string | null;
-  onNotebookClick: (item: NotebookForDetail | null) => void;
+  onNotebookClick: (notebook: NotebookForDetail) => void;
   onDeskClick: (desk: DeskForCard) => void;
 }
 
@@ -25,7 +25,7 @@ export function DeskColumn ({
   const {data: desk, isLoading} = useDesk(deskId);
   const { user } = useUser();
   const { modals: { "desk:create": createDeskModal }} = useModals();
-  const { currentSection: currentTab } = useDeskContext();
+  const { currentSection } = useDeskContext();
   const { joinDesk, leaveDesk, isJoining, isLeaving } = useJoinOrLeaveDesk();
 
   function handleJoinSchoolDesk() {
@@ -40,7 +40,8 @@ export function DeskColumn ({
 
   const renderDeskView = (desk: DeskForDetail) => {
    
-    switch(currentTab) {
+    switch(currentSection) {
+      
       case DeskSection.notebooks:
         return (
           <NotebooksView
@@ -70,6 +71,10 @@ export function DeskColumn ({
             {...props}
           />
       );
+      default:
+        return (
+          <DeskHomeView {...props} />
+        )
     }
   };
 

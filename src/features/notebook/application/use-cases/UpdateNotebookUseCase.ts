@@ -2,7 +2,7 @@ import { NotebookRepository } from "../../domain/repositories";
 import { getUserErrorMessage } from "@/lib/utils/errors";
 import { UpdateNotebookInput } from "../dto";
 import { DeskStorage } from "@/features/desk/domain/services";
-import { getCurrentUser } from "@/features/auth/server";
+import { getCurrentUser } from "@/actions/auth/getCurrentUser";
 import { ApplicationError, ApplicationResultWithData } from "@/shared/kernel";
 import { NotebookForDetail } from "../../infrastructure/queries";
 

@@ -10,8 +10,13 @@ export const APP_ROUTES = {
   desks: "/desks",
   desk: (deskId: string) => `/desks/${deskId}`,
   notebook: (deskId: string, notebookId: string) => `/desks/${deskId}/notebooks/${notebookId}`,
+  notebooks: (deskId: string) => `/desks/${deskId}/notebooks`,
+  studyRooms: (deskId: string) => `/desks/${deskId}/study-rooms`,
+  burningQuestions: (deskId: string) => `/desks/${deskId}/burning-questions`,
   deskMembers: (deskId: string) => `/desks/${deskId}/members`,
-  deskChalkboard: (deskId: string) => `/desks/${deskId}/chalkboard`,
+  chalkboard: (deskId: string) => `/desks/${deskId}/chalkboard`,
+  settings: (deskId: string) => `/desks/${deskId}/settings`,
+  notifications: (deskId: string) => `/desks/${deskId}/notifications`,
 } as const;
 
 export const RIGHT_MODES = {
@@ -32,24 +37,26 @@ export const PANELS = {
 
 export type ProfileOrigin = keyof typeof PROFILE_ORIGINS;
 export enum DeskSection {
+  home = "home",
   notebooks = "notebooks",
   chalkboard = "chalkboard",
   burningQuestions = "burning-questions",
   studyRooms = "study-rooms",
+  members = "members",
+  settings = "settings",
+  notifications = "notifications",
 }
 
 type HomeNavigationContextType = {
-  currentProfileUserId: string | null;
-  profileOrigin: ProfileOrigin;
   materialIndex: number;
   setMaterialIndex: (index: number) => void;
-  handleNotebookClick: (item: NotebookForDetail | null) => void;
+  handleNotebookClick: (notebook: NotebookForDetail) => void;
   handleDeskClick: (desk: DeskForCard) => void;
   handleDesksOpen: () => void;
-  handleProfileOpen: (userId: string, origin: ProfileOrigin) => void;
-  handleProfileExit: () => void;
   handleDeskExit: () => void;
-};
+  handleSectionClick: (section: DeskSection) => void;
+  handleNotebookExit: () => void;
+  };
 
 const HomeNavigationContext = createContext<HomeNavigationContextType | undefined>(undefined);
 
@@ -65,23 +72,32 @@ function getRouteState(pathname: string) {
     return {
       deskId: null,
       notebookId: null,
-      section: DeskSection.notebooks,
+      section: null,
       hasRightPanel: false,
     };
   }
 
-    
+  function getSection(section: string) {
+   
+    if(section === DeskSection.notebooks) {
+      return DeskSection.notebooks;
+    }
+    if(section === DeskSection.chalkboard) {
+      return DeskSection.chalkboard;
+    }
+    if(section === DeskSection.burningQuestions) {
+      return DeskSection.burningQuestions;
+    }
+    if(section === DeskSection.studyRooms) {
+      return DeskSection.studyRooms;
+    }
+    return null;
+  }
 
   return {
     deskId: deskId ?? null,
     notebookId: section === DeskSection.notebooks ? notebookId ?? null : null,
-    section: section === DeskSection.chalkboard     
-    ? DeskSection.chalkboard
-    : section === DeskSection.burningQuestions
-    ? DeskSection.burningQuestions
-    : section === DeskSection.studyRooms
-    ? DeskSection.studyRooms
-    : null,
+    section: getSection(section),
     hasRightPanel: section === DeskSection.notebooks && !!notebookId,
   };
 }
@@ -89,17 +105,14 @@ function getRouteState(pathname: string) {
 export function HomeNavigationProvider({ children }: HomeNavigationProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentProfileUserId, setCurrentProfileUserId] = useState<string | null>(null);
-  const [profileOrigin, setProfileOrigin] = useState<ProfileOrigin>("direct");
   const [materialIndex, setMaterialIndex] = useState(0);
-  const { currentDeskId, currentNotebookId, setCurrentDeskId, setCurrentNotebookId, setCurrentSection } = useDeskContext();
+  const {currentDeskId, setCurrentDeskId, setCurrentNotebookId, setCurrentSection } = useDeskContext();
   const {
-    openColumn,
-    setRightMode,
     selectNotebookLayout,
     selectDeskLayout,
-    closeRightLayout,
     openLeftLayout,
+    selectSectionLayout,
+    closeRightLayout,
   } = useLayout();
 
   useEffect(() => {
@@ -107,55 +120,70 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
    
     setCurrentDeskId(route.deskId);
     setCurrentNotebookId(route.notebookId);
-
-    if(!route.section) {
-      return;
-    }
-    setCurrentSection(route.section);
    
-
     if (route.notebookId) {
-      setRightMode("notebook");
+      setCurrentSection(DeskSection.notebooks);
       selectNotebookLayout();
-    } else if (route.deskId) {
-      selectDeskLayout();
-    } else {
-      openLeftLayout();
     }
-  }, [openLeftLayout, pathname, selectDeskLayout, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId, setCurrentSection, setRightMode]);
-
-  const handleNotebookClick = useCallback((item: NotebookForDetail | null) => {
-    setCurrentProfileUserId(null);
-    setProfileOrigin("direct");
-    setMaterialIndex(0);
-    if (!item) {
-      setCurrentNotebookId(null);
-      closeRightLayout();
-      router.push(currentDeskId ? APP_ROUTES.desk(currentDeskId) : APP_ROUTES.desks);
+    else if (route.section) {
+      setCurrentSection(route.section);
+      selectSectionLayout();
+    }
+    else if (route.deskId) {
+      selectDeskLayout(false);
+    } 
+  }, [openLeftLayout, pathname, selectDeskLayout, selectNotebookLayout, selectSectionLayout, setCurrentDeskId, setCurrentNotebookId, setCurrentSection]);
+  const handleSectionClick = useCallback((section: DeskSection) => {
+    if(!currentDeskId) {
       return;
     }
-    setCurrentDeskId(item.deskId);
-    setCurrentNotebookId(item.id);
+    setCurrentSection(section);
+    selectSectionLayout();
+    if(section === DeskSection.chalkboard) {
+      router.push(APP_ROUTES.chalkboard(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.burningQuestions) {
+      router.push(APP_ROUTES.burningQuestions(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.studyRooms) {
+      router.push(APP_ROUTES.studyRooms(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.home) {
+      router.push(APP_ROUTES.desk(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.members) {
+      router.push(APP_ROUTES.deskMembers(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.settings) {
+      router.push(APP_ROUTES.settings(currentDeskId));
+      return;
+    }
+    if(section === DeskSection.notifications) {
+      router.push(APP_ROUTES.notifications(currentDeskId));
+      return;
+    }
+
+  }, [currentDeskId, router, selectSectionLayout, setCurrentSection]);
+  const handleNotebookClick = useCallback((notebook: NotebookForDetail) => {
+    setMaterialIndex(0);
+    setCurrentDeskId(notebook.deskId);
+    setCurrentNotebookId(notebook.id);
     selectNotebookLayout();
-    router.push(APP_ROUTES.notebook(item.deskId, item.id));
-  }, [closeRightLayout, currentDeskId, router, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId]);
+    router.push(APP_ROUTES.notebook(notebook.deskId, notebook.id));
+  }, [router, selectNotebookLayout, setCurrentDeskId, setCurrentNotebookId]);
 
   const handleDeskClick = useCallback((desk: DeskForCard) => {
-    setCurrentProfileUserId(null);
-    setProfileOrigin("direct");
     setMaterialIndex(0);
-    if (currentDeskId === desk.id) {
-      setCurrentDeskId(null);
-      setCurrentNotebookId(null);
-      openLeftLayout();
-      router.push(APP_ROUTES.desks);
-      return;
-    }
     setCurrentDeskId(desk.id);
     setCurrentNotebookId(null);
-    selectDeskLayout();
+    selectDeskLayout(false);
     router.push(APP_ROUTES.desk(desk.id));
-  }, [currentDeskId, openLeftLayout, router, selectDeskLayout, setCurrentDeskId, setCurrentNotebookId]);
+  }, [router, selectDeskLayout, setCurrentDeskId, setCurrentNotebookId]);
 
   const handleDesksOpen = useCallback(() => {
     setCurrentDeskId(null);
@@ -165,26 +193,7 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
     router.push(APP_ROUTES.desks);
   }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId]);
 
-  const handleProfileOpen = useCallback((userId: string, origin: ProfileOrigin) => {
-    setCurrentProfileUserId(userId);
-    setProfileOrigin(origin);
-    setRightMode("profile");
-    openColumn("right");
-  }, [openColumn, setRightMode]);
-
-  const handleProfileExit = useCallback(() => {
-    if (profileOrigin === "notebook" && currentNotebookId) {
-      setCurrentProfileUserId(null);
-      setProfileOrigin("direct");
-      setRightMode("notebook");
-      openColumn("right");
-      return;
-    }
-    setCurrentProfileUserId(null);
-    setProfileOrigin("direct");
-    closeRightLayout();
-  }, [closeRightLayout, currentNotebookId, openColumn, profileOrigin, setRightMode]);
-
+  
   const handleDeskExit = useCallback(() => {
     setCurrentDeskId(null);
     setCurrentNotebookId(null);
@@ -193,19 +202,26 @@ export function HomeNavigationProvider({ children }: HomeNavigationProviderProps
     router.push(APP_ROUTES.desks);
   }, [openLeftLayout, router, setCurrentDeskId, setCurrentNotebookId]);
 
+  const handleNotebookExit = useCallback(() => {
+    if(!currentDeskId) {
+      return;
+    }
+    setCurrentNotebookId(null);
+    closeRightLayout();
+    router.push(APP_ROUTES.notebooks(currentDeskId));
+  }, [closeRightLayout, currentDeskId, router, setCurrentNotebookId]);
+
   return (
     <HomeNavigationContext.Provider
       value={{
-        currentProfileUserId,
-        profileOrigin,
         materialIndex,
         setMaterialIndex,
         handleNotebookClick,
+        handleNotebookExit,
         handleDeskClick,
         handleDesksOpen,
-        handleProfileOpen,
-        handleProfileExit,
         handleDeskExit,
+        handleSectionClick
       }}
     >
       {children}

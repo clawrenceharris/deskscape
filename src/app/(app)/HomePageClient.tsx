@@ -2,7 +2,7 @@
 import { useDeskContext, useLayout } from "@/app/providers";
 import { useMediaQuery } from "@/hooks";
 import { DesksColumn, DeskColumn } from "@/features/desk/presentation/components/columns";
-import { RightColumn } from "./_components";
+import { NotebookColumn } from "./_components";
 import { AnimatePresence } from "motion/react";
 import { useDesk } from "@/features/desk/presentation/hooks";
 import { useHomeNavigation } from "@/app/providers";
@@ -17,19 +17,16 @@ export function HomePageClient() {
   const { isColumnOpen } = useLayout();
   const { data: currentDesk = null } = useDesk(currentDeskId ?? null);
   const isRightMode = useMemo(() => isColumnOpen("right"), [isColumnOpen]);
-  const {
-    currentProfileUserId,
-    profileOrigin,
+  const {  
     materialIndex,
-    
     setMaterialIndex,
     handleNotebookClick,
     handleDeskClick,
     handleDesksOpen,
-    handleProfileOpen,
-    handleProfileExit,
     handleDeskExit,
+    handleNotebookExit
   } = useHomeNavigation();
+  const { openLeftLayout, openExpandedLayout } = useLayout();
   function handleDesksCollapse(e: React.MouseEvent<HTMLButtonElement>) {
    
     if(currentDeskId) {
@@ -42,8 +39,14 @@ export function HomePageClient() {
   const isMobile = useMediaQuery("(max-width: 768px)", {
     initializeWithValue: false,
   });
+  function handleDeskCollapse() {
+    if(isMobile) {
+      openLeftLayout();
+      return;
+    }
+    openExpandedLayout();
+  }
 
-  
   return (
     <div className="page"> 
       <Header/>
@@ -54,7 +57,7 @@ export function HomePageClient() {
           className="border rounded-r-none"
           openWidth={"100%"}
           closedWidth={0}
-          collapsable={false}
+          onCollapse={handleDesksCollapse}
           onOpen={handleDesksOpen}
           onDeskClick={handleDeskClick}
           columnType={"left"}
@@ -75,28 +78,24 @@ export function HomePageClient() {
       <AnimatePresence mode="popLayout">
          
           <DeskColumn
-          className={cn("border rounded-l-none border-l-0", isRightMode ? "rounded-none" : "")}
-
-          openWidth={"100%"}
-          closedWidth={isMobile ? 0 : 55}
-          deskId={currentDesk?.id ?? null}
-          onCollapse={handleDeskExit}
-          onNotebookClick={handleNotebookClick}
-          columnType={"center"}
-          onDeskClick={handleDeskClick}
+            className={cn("border rounded-l-none border-l-0", isRightMode ? "rounded-none" : "")}
+            openWidth={"100%"}
+            closedWidth={isMobile ? 0 : 55}
+            deskId={currentDesk?.id ?? null}
+            onCollapse={handleDeskCollapse}
+            onNotebookClick={handleNotebookClick}
+            columnType={"center"}
+            onDeskClick={handleDeskClick}
         />
       </AnimatePresence>
       <AnimatePresence mode="popLayout">
         {isRightMode && 
-          <RightColumn 
+          <NotebookColumn 
             className="border rounded-l-none border-l-0"
-            profileUserId={currentProfileUserId}
-            profileOrigin={profileOrigin}
-            onProfileOpen={handleProfileOpen}
-            onProfileExit={handleProfileExit}
             materialIndex={materialIndex}
             onMaterialIndexChange={setMaterialIndex}
             closedWidth={0}
+            onCollapse={handleNotebookExit}
             openWidth={isMobile ? "100%" : 450}
             
             columnType={"right"}

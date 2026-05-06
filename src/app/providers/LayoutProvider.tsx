@@ -16,7 +16,9 @@ interface LayoutContextType {
   openColumns: ColumnType[];
   rightMode: RightPanelMode;
   setRightMode: (mode: RightPanelMode) => void;
-  selectDeskLayout: () => void;
+  selectDeskLayout: (expanded: boolean) => void;
+  selectSectionLayout: () => void;
+  openExpandedLayout: () => void;
   selectNotebookLayout: () => void;
   closeRightLayout: () => void;
   openLeftLayout: () => void;
@@ -69,15 +71,28 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
     setIsExpandedMode(false);
   }, [commitColumns]);
 
-  const selectDeskLayout = useCallback(() => {
-    commitColumns(isMobile ? ["center"] : ["left"]);
-  }, [commitColumns, isMobile]);
+  /**
+   * Selects the desk layout.
+   * @param expanded - Whether to expand the layout (left layout closed, center layout open).
+   */
+  const selectDeskLayout = useCallback((expanded: boolean = false) => {
+    if(expanded) {
+      commitColumns(["center"]);
+    }
+    else {
+      commitColumns(["left"]);
+    }
+  }, [commitColumns]);
 
   const selectNotebookLayout = useCallback(() => {
     setRightMode("notebook");
     commitColumns(["right"]);
   }, [commitColumns]);
+  const selectSectionLayout = useCallback(() => {
+    console.log("selectSectionLayout");
+    commitColumns([isMobile ? "center" : "left"]);
 
+  }, [commitColumns, isMobile]);
   const openRightLayout = useCallback(() => {
     commitColumns(["right"]);
   }, [commitColumns]);
@@ -169,17 +184,19 @@ const LayoutProvider = ({ children, initialColumns }: LayoutProviderProps) => {
       isColumnOpen,
       openColumn,
       closeColumn,
+      selectSectionLayout,
       openColumns,
       rightMode,
       setRightMode,
       selectDeskLayout,
       selectNotebookLayout,
       closeRightLayout,
+      openExpandedLayout,
       openRightLayout,
       openLeftLayout,
       normalizeLayout,
     }),
-    [closeColumn, closeRightLayout, isColumnOpen, normalizeLayout, openColumn, openColumns, openLeftLayout, openRightLayout, rightMode, selectNotebookLayout, selectDeskLayout],
+    [closeColumn,selectSectionLayout,openExpandedLayout, closeRightLayout, isColumnOpen, normalizeLayout, openColumn, openColumns, openLeftLayout, openRightLayout, rightMode, selectNotebookLayout, selectDeskLayout],
   );
 
   return (

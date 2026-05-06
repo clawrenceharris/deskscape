@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { getDeskById } from "../../server";
+import { getDeskById } from "@/actions/desk/getDeskById";
 import { ApplicationError } from "@/lib/utils/errors";
 import { deskKeys } from "@/lib/queries";
 

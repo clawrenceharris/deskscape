@@ -2,7 +2,7 @@
 
 import { makeGetVotesByNotebookUseCase } from "@/composition/notebook";
 import {  ActionResultWithData } from "@/actions";
-import { NotebookVote } from "../infrastructure/queries";
+import { NotebookVote } from "@/features/notebook/infrastructure/queries";
 
 export async function getVotesByNotebookId(notebookId: string): Promise<ActionResultWithData<NotebookVote[]>> {
     const useCase = await makeGetVotesByNotebookUseCase();

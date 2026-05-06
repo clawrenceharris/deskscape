@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -117,7 +118,7 @@ export function EmptyState({
   const renderCard = () => (
     <Card
       className={cn(
-      "p-3 bg-muted-background max-w-sm w-full rounded-3xl shadow-none flex flex-col justify-center text-center",
+      "p-3  max-w-sm w-full rounded-3xl shadow-none flex flex-col justify-center text-center",
         className,
       )}
     >

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { DeskForDetail } from "../../infrastructure/queries";
-import { getDesks } from "../../server";
+import { getDesks } from "@/actions/desk/getDesks";
 
 export function useDesks(select?: (data: DeskForDetail[]) => DeskForDetail[]) {
   return useQuery({

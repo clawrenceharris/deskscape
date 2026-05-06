@@ -1,6 +1,6 @@
 "use server";
 import { makeGetAllSchoolsUseCase } from "@/composition/school";
-import { GetSchoolsInput, GetSchoolsResult } from "../application/dto";
+import { GetSchoolsInput, GetSchoolsResult } from "@/features/school/application/dto";
 
 export async function getSchools(input?: GetSchoolsInput): Promise<GetSchoolsResult>{
     

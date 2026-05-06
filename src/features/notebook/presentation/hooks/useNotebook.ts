@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { notebookKeys } from "@/lib/queries";
 import { ApplicationError } from "@/lib/utils/errors";
-import { getNotebookById } from "../../server";
+import { getNotebookById } from "@/actions/notebook/getNotebookById";
 
 const DESK_ITEM_QUERY_TIMEOUT_MS = 20_000;
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSchoolDesks } from "../../server";
+import { getSchoolDesks } from "@/actions/desk/getSchoolDesks";
 import { DeskForDetail } from "../../infrastructure/queries";
 import { deskKeys } from "@/lib/queries";
 export function useSchoolDesks (schoolId: string, select?: (data: DeskForDetail[]) => DeskForDetail[]) {

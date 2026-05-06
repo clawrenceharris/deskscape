@@ -1,8 +1,8 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
-import { DeskForDetail } from "../infrastructure/queries";
+import { DeskForDetail } from "@/features/desk/infrastructure/queries";
 import { ActionResultWithData } from "@/actions";
-import { PrismaDeskRepository } from "../infrastructure/repositories";
+import { PrismaDeskRepository } from "@/features/desk/infrastructure/repositories";
 import { getUserErrorMessage } from "@/lib/utils/errors";
 
 export async function getDeskById(deskId: string):Promise<ActionResultWithData<DeskForDetail | null>> {

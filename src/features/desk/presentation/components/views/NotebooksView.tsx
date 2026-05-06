@@ -1,3 +1,4 @@
+"use client";
 import { useDeskContext, useUser } from "@/app/providers";
 import { EmptyState } from "@/components/states";
 import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";

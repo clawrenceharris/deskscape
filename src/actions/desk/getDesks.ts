@@ -1,7 +1,7 @@
 "use server";
-import { GetDesksInput, GetDesksResult } from "../application/dto";
-import { GetDesksUseCase } from "../application/use-cases";
-import { PrismaDeskRepository } from "../infrastructure/repositories";
+import { GetDesksInput, GetDesksResult } from "@/features/desk/application/dto";
+import { GetDesksUseCase } from "@/features/desk/application/use-cases";
+import { PrismaDeskRepository } from "@/features/desk/infrastructure/repositories";
 import { prisma } from "@/lib/db/prisma";
 
 export async function getDesks(input?: GetDesksInput): Promise<GetDesksResult> {

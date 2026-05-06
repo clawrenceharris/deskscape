@@ -1,4 +1,5 @@
-  import { EmptyState } from "@/components/states";
+"use client";
+import { EmptyState } from "@/components/states";
 import { Column, type ColumnProps } from "../columns";
 import { DeskForDetail } from "@/features/desk/infrastructure/queries";
 interface ChalkboardViewProps extends ColumnProps {

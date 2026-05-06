@@ -1,6 +1,6 @@
 "use server";
 import { makeGetProfileUseCase } from "@/composition/profile";
-import { ProfileForDetail } from "../infrastructure/queries";
+import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 import { ActionResultWithData } from "@/actions";
 
 export async function getProfile(userId: string): Promise<ActionResultWithData<ProfileForDetail | null>> {

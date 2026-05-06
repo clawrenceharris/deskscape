@@ -1,9 +1,9 @@
 "use server";
 import { ActionResultWithData } from "@/actions";
 import { prisma } from "@/lib/db/prisma";
-import { NotebookForDetail } from "../infrastructure/queries";
+import { NotebookForDetail } from "@/features/notebook/infrastructure/queries";
 import { getUserErrorMessage } from "@/lib/utils/errors";
-import { PrismaNotebookRepository } from "../infrastructure/repositories";
+import { PrismaNotebookRepository } from "@/features/notebook/infrastructure/repositories";
 
 export async function getNotebookById(id: string): Promise<ActionResultWithData<NotebookForDetail | null>> {
     try{   

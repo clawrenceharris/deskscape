@@ -1,9 +1,9 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
-import { PrismaSchoolRepository } from "../infrastructure/repositories";
+import { PrismaSchoolRepository } from "@/features/school/infrastructure/repositories";
 import { getUserErrorMessage } from "@/lib/utils/errors";
 import { ActionResultWithData } from "@/actions";
-import { SchoolForDetail } from "../infrastructure/queries";
+import { SchoolForDetail } from "@/features/school/infrastructure/queries";
 
 export async function getSchoolById(schoolId: string): Promise<ActionResultWithData<SchoolForDetail | null>> {
     try {

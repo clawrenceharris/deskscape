@@ -1,1 +1,1 @@
-export * from "./columns/NotebookColumn";
+export * from "./views/NotebookView";

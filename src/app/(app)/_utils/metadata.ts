@@ -1,4 +1,4 @@
-import { getDeskById } from "@/features/desk/server";
+import { getDeskById } from "@/actions/desk/getDeskById";
 
 /** Page metadata helper for desk-scoped routes (extend for notebook titles when needed). */
 export async function getCurrentDeskOrNotebookTitle(currentDeskId: string) {

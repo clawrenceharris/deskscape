@@ -1,8 +1,8 @@
 "use server";
-import { PrismaDeskRepository } from "../infrastructure/repositories";
-import { GetDesksUseCase } from "../application/use-cases";
+import { PrismaDeskRepository } from "@/features/desk/infrastructure/repositories";
+import { GetDesksUseCase } from "@/features/desk/application/use-cases";
 import { prisma } from "@/lib/db/prisma";
-import { GetDesksResult } from "../application/dto";
+import { GetDesksResult } from "@/features/desk/application/dto";
 
 export const getSchoolDesks = async (schoolId: string): Promise<GetDesksResult> => {
     const deskRepository = new PrismaDeskRepository(prisma);

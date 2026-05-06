@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getCurrentUser } from "@/features/auth/server";
+import { getCurrentUser } from "@/actions/auth/getCurrentUser";
 import { createMockUser } from "@/test/utils";
 import type { NotebookRepository } from "../../domain/repositories";
 import { VoteNotebookUseCase } from "./VoteNotebookUseCase";

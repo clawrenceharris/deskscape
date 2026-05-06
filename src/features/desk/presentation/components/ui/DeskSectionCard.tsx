@@ -14,7 +14,7 @@ type DeskSectionSupply = {
 
 type DeskSectionCardProps = {
   section: DeskSection;
-  onClick?: () => void;
+  onClick?: (section: DeskSection) => void;
   supplies?: DeskSectionSupply[];
   label: string;
 }
@@ -28,23 +28,19 @@ export function DeskSectionCard({ section, label, onClick, supplies =[] }: DeskS
       initial="rest"
       animate="rest"
       whileHover="hover"
-      onClick={onClick}
+      onClick={() => onClick?.(section)}
     >
       <Card 
         className={cn(`
           flex
           items-start
           justify-start
-          dark:hover:bg-white
           h-full
           w-full
           relative
           p-0
-          bg-linear-to-t from-muted-background to-white
           flex-col
           transition-all duration-300 ease-in-out
-          border
-          border-muted-foreground/10
           shadow-md
           ring-0
           overflow-hidden

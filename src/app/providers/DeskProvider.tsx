@@ -7,8 +7,8 @@ type DeskContextType = {
   setCurrentNotebookId: (notebookId: string | null) => void;
   currentDeskId: string | null;
   currentNotebookId: string | null;
-  currentSection: DeskSection;
-  setCurrentSection: (section: DeskSection) => void;
+  currentSection: DeskSection | null;
+  setCurrentSection: (section: DeskSection | null) => void;
 }
 
 type DeskProviderProps = {
@@ -20,7 +20,7 @@ const DeskContext = createContext<DeskContextType | undefined>(undefined);
 export function DeskProvider({ children }: DeskProviderProps) {
   const [currentDeskId, setCurrentDeskId] = useState<string | null>(null);
   const [currentNotebookId, setCurrentNotebookId] = useState<string | null>(null);
-  const [currentSection, setCurrentSection] = useState<DeskSection>(DeskSection.notebooks);
+  const [currentSection, setCurrentSection] = useState<DeskSection | null>(null);
   return <DeskContext.Provider value={{ 
     setCurrentNotebookId,
     currentNotebookId,

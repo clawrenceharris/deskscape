@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getVotesByNotebookId } from "../../server";
+import { getVotesByNotebookId } from "@/actions/notebook/getVotesByNotebookId";
 import { useCallback } from "react";
 import { voteNotebookAction } from "@/actions/notebook";
 import { ApplicationError, getUserErrorMessage } from "@/lib/utils/errors";
@@ -12,20 +12,20 @@ import { notebookKeys } from "@/lib/queries";
 export function useVotes(notebookId: string | null) {
     const queryClient = useQueryClient();
     return useQuery({
-            queryKey: notebookKeys.votes(notebookId ?? ""),
-            initialData: queryClient.getQueryData(notebookKeys.votes(notebookId ?? "")) as NotebookVote[] | undefined,
-            queryFn: async () => {
-                if(!notebookId){
-                    throw new Error("notebookId is required to fetch votes.");
-                }
-                const result = await getVotesByNotebookId(notebookId);
-                if(!result.success){
-                    throw new ApplicationError(result.error);
-                }
-                queryClient.setQueryData(notebookKeys.votes(notebookId), result.data);
-                return result.data;
-            },
-            enabled: !!notebookId,
+        queryKey: notebookKeys.votes(notebookId ?? ""),
+        initialData: queryClient.getQueryData(notebookKeys.votes(notebookId ?? "")) as NotebookVote[] | undefined,
+        queryFn: async () => {
+            if(!notebookId){
+                throw new Error("notebookId is required to fetch votes.");
+            }
+            const result = await getVotesByNotebookId(notebookId);
+            if(!result.success){
+                throw new ApplicationError(result.error);
+            }
+            queryClient.setQueryData(notebookKeys.votes(notebookId), result.data);
+            return result.data;
+        },
+        enabled: !!notebookId,
     });
         
 

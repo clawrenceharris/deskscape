@@ -1,9 +1,9 @@
 "use client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { getProfile } from "../../server";
+import { getProfile } from "@/actions/profile/getProfile";
 import { profileKeys } from "@/lib/queries/keys";
 import { ApplicationError } from "@/lib/utils/errors";
-import { ProfileForDetail } from "../../infrastructure/queries";
+import { ProfileForDetail } from "@/features/profile/infrastructure/queries";
 import { withTimeout } from "@/lib/utils/withTimeout";
 const PROFILE_QUERY_TIMEOUT_MS = 10_000;
     

@@ -1,6 +1,6 @@
 import { schoolKeys } from "@/lib/queries";
 import { useQuery } from "@tanstack/react-query";
-import { getUserSchools } from "../../server";
+import { getUserSchools } from "@/actions/school/getUserSchools";
 import { ApplicationError } from "@/lib/utils/errors";
 import { SchoolForDetail } from "../../infrastructure/queries";
 

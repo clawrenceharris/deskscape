@@ -2,7 +2,7 @@
 import { VoteNotebookInput } from "../dto";
 import { NotebookRepository } from "../../domain/repositories";
 import { getUserErrorMessage } from "@/lib/utils/errors";
-import { getCurrentUser } from "@/features/auth/server";
+import { getCurrentUser } from "@/actions/auth/getCurrentUser";
 import { ApplicationError, ApplicationResult } from "@/shared/kernel";
 
 export class VoteNotebookUseCase {

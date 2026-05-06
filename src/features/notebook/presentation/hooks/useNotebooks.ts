@@ -1,5 +1,6 @@
+"use client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getNotebooks } from "../../server";
+import { getNotebooks } from "@/actions/notebook/getNotebooks";
 import { NotebookForDetail } from "../../infrastructure/queries";
 import { ApplicationError } from "@/lib/utils/errors";
 import { notebookKeys } from "@/lib/queries";

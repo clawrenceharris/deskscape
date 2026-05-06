@@ -29,7 +29,7 @@ interface NotebookColumnProps {
   onMaterialIndexChange: (index: number) => void;
 }
 
-export function NotebookColumn({
+export function NotebookView({
   onProfileClick,
   notebookId,
   materialIndex,

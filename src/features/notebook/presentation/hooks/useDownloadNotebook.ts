@@ -1,3 +1,4 @@
+"use client";
 import { downloadNotebookAction } from "@/actions/notebook"
 import { DownloadNotebookInput } from "@/features/notebook/application/dto";
 import { notebookKeys, deskKeys } from "@/lib/queries";
